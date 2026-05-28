@@ -1,13 +1,24 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Persistence;
 
 namespace Infrastructure.Repositories
 {
-    public class UnitOfWork(ApplicationDbContext context, ITrainingEventRepository trainingEventRepository) : IUnitOfWork
+    public class UnitOfWork(
+        ApplicationDbContext context,
+        ITrainingEventRepository trainingEvents,
+        IEmployeeRepository employees,
+        IProductionLineRepository productionLines,
+        IGenericRepository<EventAttendee> eventAttendees,
+        IGenericRepository<TopicEvaluation> topicEvaluations) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
 
-        public ITrainingEventRepository TrainingEvents { get; } = trainingEventRepository;
+        public ITrainingEventRepository TrainingEvents { get; } = trainingEvents;
+        public IEmployeeRepository Employees { get; } = employees;
+        public IProductionLineRepository ProductionLines { get; } = productionLines;
+        public IGenericRepository<EventAttendee> EventAttendees { get; } = eventAttendees;
+        public IGenericRepository<TopicEvaluation> TopicEvaluations { get; } = topicEvaluations;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
