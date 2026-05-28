@@ -15,7 +15,10 @@ namespace Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("Connection")));
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
             services.AddScoped<ITrainingEventRepository, TrainingEventRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IProductionLineRepository, ProductionLineRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
