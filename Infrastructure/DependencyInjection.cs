@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,8 @@ namespace Infrastructure
             services.AddScoped<ITrainingEventRepository, TrainingEventRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IProductionLineRepository, ProductionLineRepository>();
+
+            services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
