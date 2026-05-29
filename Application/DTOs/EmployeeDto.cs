@@ -8,6 +8,6 @@
 
         public required string Name { get; set; }
 
-        public required string LineOrArea { get; set; }
+        public required string Line { get; set; }
     }
 }
