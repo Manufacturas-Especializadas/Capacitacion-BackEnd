@@ -11,6 +11,8 @@ namespace Domain.Interfaces
         IGenericRepository<EventAttendee> EventAttendees { get; }
         IGenericRepository<TopicEvaluation> TopicEvaluations { get; }
 
+        IGenericRepository<TrainingRoom> TrainingRooms { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
