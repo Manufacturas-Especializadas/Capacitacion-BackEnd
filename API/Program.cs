@@ -18,6 +18,17 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+var allowedConnection = builder.Configuration.GetValue<string>("OrigenesPermitidos")!.Split(',');
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins(allowedConnection)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -26,11 +37,12 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Capacitacion MESA API v1");
 });
 
+app.UseCors("AllowSpecificOrigins");
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-// Redirección automática a la interfaz gráfica
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();
