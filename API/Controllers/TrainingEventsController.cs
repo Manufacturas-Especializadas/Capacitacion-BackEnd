@@ -33,6 +33,28 @@ namespace API.Controllers
             return Ok(new { message = "Participantes y matriz asignados correctamente." });
         }
 
+        [HttpPost("save-attendance/{id}")]
+        public async Task<IActionResult> SaveFinalAttendance(int id, [FromBody] SaveAttendanceDto request)
+        {
+            if(id != request.EventId)
+            {
+                return BadRequest("El ID del evento no coincide con la ruta");
+            }
+
+            var command = new SaveAttendanceCommand(request);
+            var success = await _mediator.Send(command);
+
+            if (!success)
+            {
+                return BadRequest("Ocurrio un error al guardar la asistencia final");
+            }
+
+            return Ok(new
+            {
+                message = "Registro de capacitación completado exitosamente."
+            });
+        }
+
         [HttpGet("details/{id}")]
         public async Task<IActionResult> GetEventDetails(int id)
         {
