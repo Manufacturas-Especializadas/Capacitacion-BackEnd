@@ -10,7 +10,8 @@ namespace Infrastructure.Repositories
         IEmployeeRepository employees,
         IProductionLineRepository productionLines,
         IGenericRepository<EventAttendee> eventAttendees,
-        IGenericRepository<TopicEvaluation> topicEvaluations) : IUnitOfWork
+        IGenericRepository<TopicEvaluation> topicEvaluations,
+        IGenericRepository<TrainingRoom>? trainingRooms) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -19,6 +20,7 @@ namespace Infrastructure.Repositories
         public IProductionLineRepository ProductionLines { get; } = productionLines;
         public IGenericRepository<EventAttendee> EventAttendees { get; } = eventAttendees;
         public IGenericRepository<TopicEvaluation> TopicEvaluations { get; } = topicEvaluations;
+        public IGenericRepository<TrainingRoom>? TrainingRooms { get; } = trainingRooms;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
