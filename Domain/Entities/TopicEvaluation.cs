@@ -7,14 +7,10 @@
         public int AttendeeId { get; set; }
 
         public int TopicId { get; set; }
-        
+
         public bool IsEnrolled { get; set; }
 
         public string AttendanceStatus { get; set; } = "EMPTY";
-
-        public decimal AttendancePercentage { get; set; }
-
-        public decimal? GradeAverage { get; set; }
 
         public decimal? Grade { get; set; }
 
