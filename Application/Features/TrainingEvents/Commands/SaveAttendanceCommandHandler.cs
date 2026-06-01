@@ -77,7 +77,6 @@ namespace Application.Features.TrainingEvents.Commands
                 }
             }
 
-            _unitOfWork.TrainingEvents.Update(trainingEvent);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return true;
