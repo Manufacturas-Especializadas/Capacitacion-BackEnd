@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
 
-        public required string CourseName { get; set; }
+        public string CourseName { get; set; } = string.Empty;
 
-        public required string InstructorName { get; set; }
+        public string InstructorName { get; set; } = string.Empty;
 
         public int RoomId { get; set; }
 
@@ -14,11 +14,13 @@
 
         public DateTime DateTo { get; set; }
 
-        public string Status { get; set; } = "Borrador";
+        public string Status { get; set; } = "PROGRAMADO";
+
+        public string? GeneralComments { get; set; }
 
         public string? InstructorSignatureUrl { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         public TrainingRoom? Room { get; set; }
 

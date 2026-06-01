@@ -21,12 +21,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasOne(te => te.Attendee)
                    .WithMany(ea => ea.Evaluations)
                    .HasForeignKey(te => te.AttendeeId)
-                   .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(te => te.Topic)
-                   .WithMany(et => et.Evaluations)
-                   .HasForeignKey(te => te.TopicId)
-                   .OnDelete(DeleteBehavior.ClientCascade);
+                   .OnDelete(DeleteBehavior.Cascade);           
         }
     }
 }

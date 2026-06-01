@@ -6,12 +6,14 @@
 
         public int EventId { get; set; }
 
-        public required string TopicName { get; set; }
+        public string TopicName { get; set; } = string.Empty;
 
         public int TopicOrder { get; set; }
 
-        public TrainingEvent? TrainingEvent { get; set; }
+        public decimal? AttendancePercentage { get; set; }
 
-        public ICollection<TopicEvaluation> Evaluations { get; set; } = new List<TopicEvaluation>();
+        public decimal? GradeAverage { get; set; }
+
+        public TrainingEvent? TrainingEvent { get; set; }
     }
 }

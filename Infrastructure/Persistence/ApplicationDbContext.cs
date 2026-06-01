@@ -8,7 +8,7 @@ namespace Infrastructure.Persistence
     {
         public DbSet<ProductionLine> ProductionLines => Set<ProductionLine>();
 
-        public DbSet<TrainingRoom> Trainings => Set<TrainingRoom>();
+        public DbSet<TrainingRoom> TrainingRooms => Set<TrainingRoom>();
 
         public DbSet<Employee> Employees => Set<Employee>();
 
