@@ -74,6 +74,31 @@ namespace Application.Features.TrainingEvents.Commands
                     {
                         attendee.FinalGradeAverage = null;
                     }
+                }                
+            }
+
+            foreach (var topic in orderedTopics)
+            {
+                var topicEvaluations = trainingEvent.Attendees
+                    .SelectMany(a => a.Evaluations)
+                    .Where(e => e.TopicId == topic.Id)
+                    .ToList();
+
+                var totalAssigned = topicEvaluations.Count;
+
+                if (totalAssigned > 0)
+                {
+                    var presentCount = topicEvaluations.Count(e => e.AttendanceStatus == "PRESENT");
+                    topic.AttendancePercentage = Math.Round((decimal)presentCount / totalAssigned * 100, 2);
+
+                    var gradedEvaluations = topicEvaluations
+                        .Where(e => e.Grade.HasValue)
+                        .Select(e => e.Grade!.Value)
+                        .ToList();
+
+                    topic.GradeAverage = gradedEvaluations.Any()
+                        ? Math.Round((decimal)gradedEvaluations.Average(), 2)
+                        : null;
                 }
             }
 
