@@ -11,6 +11,8 @@ namespace Application.DTOs
 
         public IFormFile? InstructorSignature { get; set; }
 
+        public bool IsFinalSave { get; set; }
+
         public List<AttendeeRecordDto> EmployeeRecords { get; set; } = new();
     }
 }
