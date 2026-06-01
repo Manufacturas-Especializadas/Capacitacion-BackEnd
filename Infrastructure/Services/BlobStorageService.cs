@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Services
@@ -35,6 +36,28 @@ namespace Infrastructure.Services
 
             using var stream = new MemoryStream(imageBytes);
             var blobHttpHeaders = new BlobHttpHeaders { ContentType = "image/png" };
+
+            await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = blobHttpHeaders });
+
+            return blobClient.Uri.ToString();
+        }
+
+        public async Task<string> UploadFileAsync(IFormFile file, string fileName)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var blobServiceClient = new BlobServiceClient(_connectionString);
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+
+            await blobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+            using var stream = file.OpenReadStream();
+            var blobHttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType ?? "image/png" };
 
             await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = blobHttpHeaders });
 
