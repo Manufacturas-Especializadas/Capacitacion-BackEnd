@@ -27,5 +27,14 @@ namespace Infrastructure.Repositories
                     .AsNoTracking()
                     .ToListAsync();
         }
+
+        public async Task<TrainingEvent?> GetEventWithAttendeesAsync(int id)
+        {
+            return await _context.Set<TrainingEvent>()
+                    .Include(t => t.Topics)
+                    .Include(t => t.Attendees)
+                        .ThenInclude(a => a.Evaluations)
+                    .FirstOrDefaultAsync(t => t.Id == id);
+        }
     }
 }
