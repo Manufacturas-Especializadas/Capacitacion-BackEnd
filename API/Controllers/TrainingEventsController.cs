@@ -66,5 +66,14 @@ namespace API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("trainingEvents")]
+        public async Task<IActionResult> GetAllEventsSummary()
+        {
+            var query = new GetTrainingEventsQuery();
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
     }
 }
