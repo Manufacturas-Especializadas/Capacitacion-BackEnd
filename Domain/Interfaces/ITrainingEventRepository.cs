@@ -9,5 +9,7 @@ namespace Domain.Interfaces
         Task<IReadOnlyList<TrainingEvent>> GetActiveEventsAsync();
 
         Task<TrainingEvent?> GetEventWithAttendeesAsync(int id);
+
+        Task<IReadOnlyList<TrainingEvent>> GetAllEventsSummaryAsync();
     }
 }
