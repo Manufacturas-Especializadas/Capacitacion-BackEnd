@@ -53,6 +53,28 @@ namespace Application.Features.TrainingEvents.Commands
                         evaluationCell.Grade = record.Evaluations[i].Grade;
                     }
                 }
+
+                var totalEvaluations = attendee.Evaluations.Count;
+
+                if(totalEvaluations > 0)
+                {
+                    var presentCount = attendee.Evaluations.Count(e => e.AttendanceStatus == "PRESENT");
+                    attendee.AttendancePercentage = Math.Round((decimal)presentCount / totalEvaluations * 100, 2);
+
+                    var grededEvaluations = attendee.Evaluations
+                            .Where(e => e.Grade.HasValue)
+                            .Select(e => e.Grade!.Value)
+                            .ToList();
+
+                    if (grededEvaluations.Any())
+                    {
+                        attendee.FinalGradeAverage = Math.Round((decimal)grededEvaluations.Average(), 2);
+                    }
+                    else
+                    {
+                        attendee.FinalGradeAverage = null;
+                    }
+                }
             }
 
             _unitOfWork.TrainingEvents.Update(trainingEvent);
