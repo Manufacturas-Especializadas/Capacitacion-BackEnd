@@ -18,10 +18,11 @@ namespace Application.Features.TrainingEvents.Commands
 
             trainingEvent.GeneralComments = request.Data.Comments;
 
+            trainingEvent.Status = request.Data.IsFinalSave ? "COMPLETADO" : "EN_PROGRESO";
+
             if (request.Data.InstructorSignature != null && request.Data.InstructorSignature.Length > 0)
             {
                 var instructorFileName = $"signatures/instructor-{request.Data.EventId}-{Guid.NewGuid()}.png";
-
                 trainingEvent.InstructorSignatureUrl = await _blobStorage.UploadFileAsync(request.Data.InstructorSignature, instructorFileName);
             }
 
@@ -36,7 +37,6 @@ namespace Application.Features.TrainingEvents.Commands
                 if (record.Signature != null && record.Signature.Length > 0)
                 {
                     var participantFileName = $"signatures/emp-{record.EmployeeId}-event-{request.Data.EventId}-{Guid.NewGuid()}.png";
-
                     attendee.ParticipantSignatureUrl = await _blobStorage.UploadFileAsync(record.Signature, participantFileName);
                 }
 
@@ -52,29 +52,7 @@ namespace Application.Features.TrainingEvents.Commands
                         evaluationCell.AttendanceStatus = record.Evaluations[i].Status;
                         evaluationCell.Grade = record.Evaluations[i].Grade;
                     }
-                }
-
-                var totalEvaluations = attendee.Evaluations.Count;
-
-                if(totalEvaluations > 0)
-                {
-                    var presentCount = attendee.Evaluations.Count(e => e.AttendanceStatus == "PRESENT");
-                    attendee.AttendancePercentage = Math.Round((decimal)presentCount / totalEvaluations * 100, 2);
-
-                    var grededEvaluations = attendee.Evaluations
-                            .Where(e => e.Grade.HasValue)
-                            .Select(e => e.Grade!.Value)
-                            .ToList();
-
-                    if (grededEvaluations.Any())
-                    {
-                        attendee.FinalGradeAverage = Math.Round((decimal)grededEvaluations.Average(), 2);
-                    }
-                    else
-                    {
-                        attendee.FinalGradeAverage = null;
-                    }
-                }                
+                }              
             }
 
             foreach (var topic in orderedTopics)
@@ -84,12 +62,12 @@ namespace Application.Features.TrainingEvents.Commands
                     .Where(e => e.TopicId == topic.Id)
                     .ToList();
 
-                var totalAssigned = topicEvaluations.Count;
+                var evaluatedCount = topicEvaluations.Count(e => e.AttendanceStatus != "EMPTY" && e.AttendanceStatus != "PENDING");
 
-                if (totalAssigned > 0)
+                if (evaluatedCount > 0)
                 {
                     var presentCount = topicEvaluations.Count(e => e.AttendanceStatus == "PRESENT");
-                    topic.AttendancePercentage = Math.Round((decimal)presentCount / totalAssigned * 100, 2);
+                    topic.AttendancePercentage = Math.Round((decimal)presentCount / evaluatedCount * 100, 2);
 
                     var gradedEvaluations = topicEvaluations
                         .Where(e => e.Grade.HasValue)
@@ -99,6 +77,11 @@ namespace Application.Features.TrainingEvents.Commands
                     topic.GradeAverage = gradedEvaluations.Any()
                         ? Math.Round((decimal)gradedEvaluations.Average(), 2)
                         : null;
+                }
+                else
+                {
+                    topic.AttendancePercentage = null;
+                    topic.GradeAverage = null;
                 }
             }
 
