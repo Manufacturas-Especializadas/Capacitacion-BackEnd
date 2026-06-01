@@ -12,6 +12,10 @@
 
         public string AttendanceStatus { get; set; } = "EMPTY";
 
+        public decimal AttendancePercentage { get; set; }
+
+        public decimal? GradeAverage { get; set; }
+
         public decimal? Grade { get; set; }
 
         public EventAttendee? Attendee { get; set; }

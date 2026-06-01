@@ -14,6 +14,8 @@
 
         public decimal? FinalGradeAverage { get; set; }
 
+        public decimal? GradeAverage { get; set; }
+
         public TrainingEvent? TrainingEvent { get; set; }
 
         public Employee? Employee { get; set; }

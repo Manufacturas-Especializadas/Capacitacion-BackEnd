@@ -8,6 +8,10 @@
 
         public required string TopicName { get; set; }
 
+        public decimal AttendancePercentage { get; set; }
+
+        public decimal? GradeAverage { get; set; }
+
         public int TopicOrder { get; set; }
 
         public TrainingEvent? TrainingEvent { get; set; }
