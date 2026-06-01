@@ -10,6 +10,10 @@
 
         public string? ParticipantSignatureUrl { get; set; }
 
+        public decimal AttendancePercentage { get; set; }
+
+        public decimal? FinalGradeAverage { get; set; }
+
         public TrainingEvent? TrainingEvent { get; set; }
 
         public Employee? Employee { get; set; }
