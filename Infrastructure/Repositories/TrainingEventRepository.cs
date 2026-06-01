@@ -36,5 +36,14 @@ namespace Infrastructure.Repositories
                         .ThenInclude(a => a.Evaluations)
                     .FirstOrDefaultAsync(t => t.Id == id);
         }
+
+        public async Task<IReadOnlyList<TrainingEvent>> GetAllEventsSummaryAsync()
+        {
+            return await _context.Set<TrainingEvent>()
+                .Include(t => t.Attendees)
+                .OrderByDescending(t => t.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
