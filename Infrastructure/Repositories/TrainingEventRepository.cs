@@ -14,6 +14,7 @@ namespace Infrastructure.Repositories
                 .Include(e => e.Topics.OrderBy(t => t.TrainingEvent))
                 .Include(e => e.Attendees)
                     .ThenInclude(a => a.Employee)
+                    .ThenInclude(a => a.ProductionLine)
                 .Include(e => e.Attendees)
                     .ThenInclude(a => a.Evaluations)
                 .FirstOrDefaultAsync(e => e.Id == eventId);
