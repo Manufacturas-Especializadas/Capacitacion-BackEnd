@@ -15,6 +15,10 @@ namespace Application.Features.TrainingEvents.Commands
         {
             var data = request.EventData;
 
+            TimeZoneInfo mexicoTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time (Mexico)");
+
+            DateTime nowInMexico = TimeZoneInfo.ConvertTime(DateTime.UtcNow, mexicoTimeZone);
+
             var newEvent = new TrainingEvent
             {
                 CourseName = data.CourseName,
@@ -22,7 +26,8 @@ namespace Application.Features.TrainingEvents.Commands
                 RoomId = data.RoomId,
                 DateFrom = data.DateFrom,
                 DateTo = data.DateTo,
-                Status = "Borrador" 
+                Status = "Borrador",
+                CreatedAt = nowInMexico
             };
 
             for (int i = 0; i < data.EvaluationTopics.Count; i++)
