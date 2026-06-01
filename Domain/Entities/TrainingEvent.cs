@@ -16,9 +16,9 @@
 
         public string Status { get; set; } = "Borrador";
 
-        public string GeneralComments { get; set; }
+        public string? GeneralComments { get; set; } = string.Empty;
 
-        public string? InstructorSignatureUrl { get; set; }
+        public string? InstructorSignatureUrl { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

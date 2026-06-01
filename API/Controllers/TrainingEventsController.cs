@@ -34,9 +34,9 @@ namespace API.Controllers
         }
 
         [HttpPost("save-attendance/{id}")]
-        public async Task<IActionResult> SaveFinalAttendance(int id, [FromBody] SaveAttendanceDto request)
+        public async Task<IActionResult> SaveFinalAttendance(int id, [FromForm] SaveAttendanceDto request)
         {
-            if(id != request.EventId)
+            if (id != request.EventId)
             {
                 return BadRequest("El ID del evento no coincide con la ruta");
             }
@@ -46,7 +46,7 @@ namespace API.Controllers
 
             if (!success)
             {
-                return BadRequest("Ocurrio un error al guardar la asistencia final");
+                return BadRequest("Ocurrió un error al guardar la asistencia final");
             }
 
             return Ok(new

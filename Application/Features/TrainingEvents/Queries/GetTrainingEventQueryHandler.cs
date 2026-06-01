@@ -41,7 +41,7 @@ namespace Application.Features.TrainingEvents.Queries
                     Id = empIdString,
                     EmployeeNumber = attendee.Employee!.EmployeeNumber,
                     Name = attendee.Employee.Name,
-                    LineOrArea = attendee.Employee.ProductionLine?.LineName ?? "Sin línea"
+                    Line = attendee.Employee.ProductionLine?.LineName ?? "Sin línea"
                 });
 
                 var evaluationsDto = new List<TopicEvaluationDto>();

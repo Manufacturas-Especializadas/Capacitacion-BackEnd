@@ -13,44 +13,41 @@ namespace Application.Features.TrainingEvents.Commands
 
         public async Task<bool> Handle(SaveAttendanceCommand request, CancellationToken cancellationToken)
         {
-            var data = request.Data;
+            var trainingEvent = await _unitOfWork.TrainingEvents.GetEventWithAttendeesAsync(request.Data.EventId);
+            if (trainingEvent == null) return false;
 
-            var trainingEvent = await _unitOfWork.TrainingEvents.GetEventWithDetailAsync(data.EventId);
+            trainingEvent.GeneralComments = request.Data.Comments;
 
-            if (trainingEvent == null)
-                throw new ArgumentException($"No se encontró el evento con ID {data.EventId}");
+            if (request.Data.InstructorSignature != null && request.Data.InstructorSignature.Length > 0)
+            {
+                var instructorFileName = $"signatures/instructor-{request.Data.EventId}-{Guid.NewGuid()}.png";
 
-           if(!string.IsNullOrEmpty(data.InstructorSignature) && !data.InstructorSignature.StartsWith("http"))
-           {
-                var fileName = $"instructor-evento-{data.EventId}";
-                trainingEvent.InstructorSignatureUrl = await _blobStorage.UploadSignatureAsync(data.InstructorSignature, fileName);
-           }
+                trainingEvent.InstructorSignatureUrl = await _blobStorage.UploadFileAsync(request.Data.InstructorSignature, instructorFileName);
+            }
 
-            trainingEvent.GeneralComments = data.Comments!;
-            trainingEvent.Status = "Completado";
+            var orderedTopics = trainingEvent.Topics?.OrderBy(t => t.Id).ToList() ?? new();
 
-            var orderedTopics = trainingEvent.Topics.OrderBy(t => t.TopicOrder).ToList();
-
-            foreach (var record in data.EmployeeRecords)
+            foreach (var record in request.Data.EmployeeRecords)
             {
                 var attendee = trainingEvent.Attendees.FirstOrDefault(a => a.EmployeeId == record.EmployeeId);
 
                 if (attendee == null) continue;
 
-                if (!string.IsNullOrEmpty(record.Signature) && !record.Signature.StartsWith("http"))
+                if (record.Signature != null && record.Signature.Length > 0)
                 {
-                    var fileName = $"emp-{record.Signature}-evento-{data.EventId}";
-                    attendee.ParticipantSignatureUrl = await _blobStorage.UploadSignatureAsync(record.Signature, fileName);
+                    var participantFileName = $"signatures/emp-{record.EmployeeId}-event-{request.Data.EventId}-{Guid.NewGuid()}.png";
+
+                    attendee.ParticipantSignatureUrl = await _blobStorage.UploadFileAsync(record.Signature, participantFileName);
                 }
 
-                for(int i = 0; i < record.Evaluations.Count; i++)
+                for (int i = 0; i < record.Evaluations.Count; i++)
                 {
-                    if(i >= orderedTopics.Count) break;
+                    if (i >= orderedTopics.Count) break;
 
                     var topicId = orderedTopics[i].Id;
                     var evaluationCell = attendee.Evaluations.FirstOrDefault(e => e.TopicId == topicId);
 
-                    if(evaluationCell != null)
+                    if (evaluationCell != null)
                     {
                         evaluationCell.AttendanceStatus = record.Evaluations[i].Status;
                         evaluationCell.Grade = record.Evaluations[i].Grade;

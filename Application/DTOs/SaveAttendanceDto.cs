@@ -1,4 +1,7 @@
-﻿namespace Application.DTOs
+﻿
+using Microsoft.AspNetCore.Http;
+
+namespace Application.DTOs
 {
     public class SaveAttendanceDto
     {
@@ -6,7 +9,7 @@
 
         public string? Comments { get; set; }
 
-        public string? InstructorSignature { get; set; }
+        public IFormFile? InstructorSignature { get; set; }
 
         public List<AttendeeRecordDto> EmployeeRecords { get; set; } = new();
     }

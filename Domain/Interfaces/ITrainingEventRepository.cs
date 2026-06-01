@@ -7,5 +7,7 @@ namespace Domain.Interfaces
         Task<TrainingEvent?> GetEventWithDetailAsync(int eventId);
 
         Task<IReadOnlyList<TrainingEvent>> GetActiveEventsAsync();
+
+        Task<TrainingEvent?> GetEventWithAttendeesAsync(int id);
     }
 }

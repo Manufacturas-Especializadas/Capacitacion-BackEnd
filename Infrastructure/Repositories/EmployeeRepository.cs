@@ -12,5 +12,12 @@ namespace Infrastructure.Repositories
             return await _context.Employees
                 .FirstOrDefaultAsync(e => e.EmployeeNumber == employeeNumber);
         }
+
+        public async Task<IReadOnlyList<Employee>> GetAllWithLinesAsync()
+        {
+            return await _context.Set<Employee>()
+                .Include(e => e.ProductionLine)
+                .ToListAsync();
+        }
     }
 }
