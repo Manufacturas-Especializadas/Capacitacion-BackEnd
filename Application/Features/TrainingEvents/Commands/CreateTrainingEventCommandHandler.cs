@@ -26,19 +26,23 @@ namespace Application.Features.TrainingEvents.Commands
                 RoomId = data.RoomId,
                 DateFrom = data.DateFrom,
                 DateTo = data.DateTo,
-                Status = "Borrador",
+                Status = "PROGRAMADO",
                 CreatedAt = nowInMexico
             };
 
             for (int i = 0; i < data.EvaluationTopics.Count; i++)
             {
+                var topic = data.EvaluationTopics[i];
                 newEvent.Topics.Add(new EventTopic
                 {
-                    TopicName = data.EvaluationTopics[i],
-                    TopicOrder = i
+                    TopicName = topic.Name,
+                    TopicOrder = i,
+                    TopicDate = topic.Date,
+                    StartTime = topic.StartTime,
+                    EndTime = topic.EndTime
                 });
             }
-            
+
             await _unitOfWork.TrainingEvents.AddAsync(newEvent);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
