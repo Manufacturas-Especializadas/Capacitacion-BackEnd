@@ -12,6 +12,6 @@
 
         public DateTime DateTo { get; set; }
 
-        public List<string> EvaluationTopics { get; set; } = new List<string>();
+        public List<CreateTopicDto> EvaluationTopics { get; set; } = new List<CreateTopicDto>();
     }
 }
