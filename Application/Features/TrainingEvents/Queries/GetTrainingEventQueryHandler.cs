@@ -26,7 +26,13 @@ namespace Application.Features.TrainingEvents.Queries
                 Area = entity.Room?.RoomName ?? "Sin sala",
                 DateFrom = entity.DateFrom.ToString("dd-MM-yyyy"),
                 DateTo = entity.DateTo.ToString("dd-MM-yyyy"),
-                EvaluationTopics = orderedTopics.Select(t => t.TopicName).ToList()
+                EvaluationTopics = orderedTopics.Select(t => new TopicDetailDto
+                {
+                    Name = t.TopicName,
+                    Date = t.TopicDate.HasValue ? t.TopicDate.Value.ToString("dd-MM-yyyy") : string.Empty,
+                    StartTime = t.StartTime.HasValue ? t.StartTime.Value.ToString(@"hh\:mm") : string.Empty,
+                    EndTime = t.EndTime.HasValue ? t.EndTime.Value.ToString(@"hh\:mm") : string.Empty
+                }).ToList()
             };
 
             var employeesList = new List<EmployeeDto>();
