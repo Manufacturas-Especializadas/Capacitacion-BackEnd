@@ -14,6 +14,6 @@
 
         public required string DateTo { get; set; }
 
-        public List<string> EvaluationTopics { get; set; } = new();
+        public List<TopicDetailDto> EvaluationTopics { get; set; } = new();
     }
 }
