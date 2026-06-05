@@ -7,5 +7,7 @@ namespace Domain.Interfaces
         Task<string> UploadSignatureAsync(string base64Image, string fileName);
 
         Task<string> UploadFileAsync(IFormFile file, string fileName);
+
+        Task<string> UploadFileWeldersAsync(IFormFile file, string fileName);
     }
 }

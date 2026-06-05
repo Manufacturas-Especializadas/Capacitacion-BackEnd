@@ -12,6 +12,7 @@ namespace Infrastructure.Services
                                                     ?? throw new InvalidOperationException("Azure Blob Storage connection string is not configured.");
 
         private readonly string _containerName = "trainingevents";
+        private readonly string _containerNameWelders = "welderschecklist";
 
         public async Task<string> UploadSignatureAsync(string base64Image, string fileName)
         {
@@ -51,6 +52,28 @@ namespace Infrastructure.Services
 
             var blobServiceClient = new BlobServiceClient(_connectionString);
             var blobContainerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+
+            await blobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+
+            var blobClient = blobContainerClient.GetBlobClient(fileName);
+
+            using var stream = file.OpenReadStream();
+            var blobHttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType ?? "image/png" };
+
+            await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = blobHttpHeaders });
+
+            return blobClient.Uri.ToString();
+        }
+
+        public async Task<string> UploadFileWeldersAsync(IFormFile file, string fileName)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            var blobServiceClient = new BlobServiceClient(_connectionString);
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient(_containerNameWelders);
 
             await blobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
