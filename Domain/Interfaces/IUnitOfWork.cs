@@ -13,6 +13,12 @@ namespace Domain.Interfaces
 
         IGenericRepository<TrainingRoom> TrainingRooms { get; }
 
+        IGenericRepository<WelderEvaluation> WelderEvaluations { get; }
+
+        IGenericRepository<WelderPracticalAnswer> WelderPracticalAnswers { get; }
+
+        IGenericRepository<WelderUnionAnswer> WelderUnionAnswers { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
