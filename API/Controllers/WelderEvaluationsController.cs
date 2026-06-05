@@ -17,6 +17,12 @@ namespace API.Controllers
             return Ok(await _mediator.Send(new GetWelderEvaluationByIdQuery(id)));
         }
 
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            return Ok(await _mediator.Send(new GetAllWelderEvaluationsQuery()));
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromForm] CreateWelderEvaluationCommand commnad)
         {
