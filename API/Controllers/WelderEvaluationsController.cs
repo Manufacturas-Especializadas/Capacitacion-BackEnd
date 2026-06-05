@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Application.Features.WelderEvaluations.Commands;
+﻿using Application.Features.TrainingEvents.Commands;
 using Application.Features.TrainingEvents.Queries;
+using Application.Features.WelderEvaluations.Commands;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -32,6 +33,17 @@ namespace API.Controllers
             {
                 Id = evaluationId,
                 Message = "Evaluacion guardada exitosamente"
+            });
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromForm] UpdateWelderEvaluationCommand command)
+        {
+            var evaluationId = await _mediator.Send(command);
+            return Ok(new
+            {
+                Id = evaluationId,
+                Message = "Evaluacion actualizada exitosamente"
             });
         }
     }
