@@ -46,5 +46,16 @@ namespace API.Controllers
                 Message = "Evaluacion actualizada exitosamente"
             });
         }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _mediator.Send(new DeleteWelderEvaluationCommand(id));
+            return Ok(new
+            {
+                Id = id,
+                Message = "Evaluacion eliminada exitosamente"
+            });
+        }
     }
 }
