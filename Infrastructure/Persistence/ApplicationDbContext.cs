@@ -20,6 +20,12 @@ namespace Infrastructure.Persistence
 
         public DbSet<TopicEvaluation> TopicEvaluations => Set<TopicEvaluation>();
 
+        public DbSet<WelderEvaluation> WelderEvaluations => Set<WelderEvaluation>();
+
+        public DbSet<WelderPracticalAnswer> WelderPracticalAnswers => Set<WelderPracticalAnswer>();
+
+        public DbSet<WelderUnionAnswer> WelderUnionAnswers => Set<WelderUnionAnswer>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
