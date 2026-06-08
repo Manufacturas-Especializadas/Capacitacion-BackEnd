@@ -9,10 +9,10 @@ namespace Infrastructure.Repositories
         ITrainingEventRepository trainingEvents,
         IEmployeeRepository employees,
         IProductionLineRepository productionLines,
+        IWelderEvaluationRepository welderEvaluations, 
         IGenericRepository<EventAttendee> eventAttendees,
         IGenericRepository<TopicEvaluation> topicEvaluations,
         IGenericRepository<TrainingRoom>? trainingRooms,
-        IGenericRepository<WelderEvaluation> welderEvaluations,
         IGenericRepository<WelderPracticalAnswer> welderPracticalAnswer,
         IGenericRepository<WelderUnionAnswer> welderUnionAnswer) : IUnitOfWork
     {
@@ -21,12 +21,13 @@ namespace Infrastructure.Repositories
         public ITrainingEventRepository TrainingEvents { get; } = trainingEvents;
         public IEmployeeRepository Employees { get; } = employees;
         public IProductionLineRepository ProductionLines { get; } = productionLines;
+
+        public IWelderEvaluationRepository WelderEvaluations { get; } = welderEvaluations;
+
         public IGenericRepository<EventAttendee> EventAttendees { get; } = eventAttendees;
         public IGenericRepository<TopicEvaluation> TopicEvaluations { get; } = topicEvaluations;
         public IGenericRepository<TrainingRoom>? TrainingRooms { get; } = trainingRooms;
-
-        public IGenericRepository<WelderEvaluation> WelderEvaluations { get; } = welderEvaluations;
-        public IGenericRepository<WelderPracticalAnswer> WelderPracticalAnswers { get;  } = welderPracticalAnswer;
+        public IGenericRepository<WelderPracticalAnswer> WelderPracticalAnswers { get; } = welderPracticalAnswer;
         public IGenericRepository<WelderUnionAnswer> WelderUnionAnswers { get; } = welderUnionAnswer;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
