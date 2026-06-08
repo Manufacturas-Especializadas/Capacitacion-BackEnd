@@ -86,5 +86,27 @@ namespace Infrastructure.Services
 
             return blobClient.Uri.ToString();
         }
+
+        public async Task DeleteFileWeldersAsync(string fileUrl)
+        {
+            if (string.IsNullOrWhiteSpace(fileUrl)) return;
+
+            try
+            {
+                var uri = new Uri(fileUrl);
+                var blobName = uri.Segments.Last();
+
+                var blobServiceClient = new BlobServiceClient(_connectionString);
+                var blobContainerClient = blobServiceClient.GetBlobContainerClient(_containerNameWelders);
+
+                var blobClient = blobContainerClient.GetBlobClient(blobName);
+
+                await blobClient.DeleteIfExistsAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al borrar archivo de Azure: {ex.Message}");
+            }
+        }
     }
 }
