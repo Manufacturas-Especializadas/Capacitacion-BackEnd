@@ -8,6 +8,12 @@
 
         public string EmployeeName { get; set; } = string.Empty;
 
+        public string EvaluatorName { get; set; } = string.Empty;
+
+        public string lineName { get; set; } = string.Empty;
+
+        public int lineId { get; set; }
+
         public DateTime EvaluationDate { get; set; }
 
         public decimal? FinalAverage { get; set; }

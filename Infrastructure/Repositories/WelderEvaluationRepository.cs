@@ -20,6 +20,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.WelderEvaluations
                 .Include(w => w.Employee)
+                .Include(w => w.Employee!.ProductionLine)
                 .Include(w => w.PracticalAnswers)
                 .Include(w => w.UnionAnswers)
                 .FirstOrDefaultAsync(w => w.Id == id);
