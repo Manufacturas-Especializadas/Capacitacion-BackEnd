@@ -12,7 +12,7 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.Property(e => e.EvaluatorName).HasMaxLength(150).IsRequired();
             builder.Property(e => e.ExclusiveTestReference).HasMaxLength(100);
-            builder.Property(e => e.ExclusiveTestResult).HasMaxLength(255);
+            builder.Property(e => e.TotalPoints);
             builder.Property(e => e.MasteryLevel).HasMaxLength(100);
 
             builder.HasOne(e => e.Employee)
