@@ -55,6 +55,20 @@ namespace API.Controllers
             });
         }
 
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var command = new DeleteTrainingEventCommand(id);
+            var result = await _mediator.Send(command);
+
+            if (result)
+            {
+                return Ok(new { message = "Evento eliminado correctamente." });
+            }
+
+            return BadRequest("No se pudo eliminar el evento.");
+        }
+
         [HttpGet("details/{id}")]
         public async Task<IActionResult> GetEventDetails(int id)
         {
