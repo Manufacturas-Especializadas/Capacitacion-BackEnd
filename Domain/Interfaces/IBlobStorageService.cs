@@ -9,5 +9,7 @@ namespace Domain.Interfaces
         Task<string> UploadFileAsync(IFormFile file, string fileName);
 
         Task<string> UploadFileWeldersAsync(IFormFile file, string fileName);
+
+        Task DeleteFileWeldersAsync(string fileUrl);
     }
 }

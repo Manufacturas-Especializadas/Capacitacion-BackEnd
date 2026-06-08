@@ -12,7 +12,8 @@
         public string EvaluatorName { get; set; } = string.Empty;
 
         public string ExclusiveTestReference { get; set; } = "Sin requerimiento";
-        public string? ExclusiveTestResult { get; set; }
+
+        public int? TotalPoints { get; set; }
 
         public string? EvidencePhotoUrl { get; set; }
 

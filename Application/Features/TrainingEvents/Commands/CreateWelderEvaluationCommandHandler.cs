@@ -28,7 +28,7 @@ namespace Application.Features.TrainingEvents.Commands
                 EvaluationDate = request.EvaluationDate,
                 EvaluatorName = request.EvaluatorName,
                 ExclusiveTestReference = request.ExclusiveTestReference,
-                ExclusiveTestResult = request.ExclusiveTestResult,
+                TotalPoints = request.TotalPoints,
                 PracticalGrade = request.PracticalGrade,
                 UnionGrade = request.UnionGrade,
                 FinalAverage = request.FinalAverage,

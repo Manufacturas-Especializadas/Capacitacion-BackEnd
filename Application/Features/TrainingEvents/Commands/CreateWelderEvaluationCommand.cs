@@ -16,6 +16,8 @@ namespace Application.Features.WelderEvaluations.Commands
 
         public string? ExclusiveTestResult { get; set; }
 
+        public int TotalPoints { get; set; }
+
         public decimal? PracticalGrade { get; set; }
 
         public decimal? UnionGrade { get; set; }

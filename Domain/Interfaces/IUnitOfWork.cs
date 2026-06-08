@@ -13,7 +13,7 @@ namespace Domain.Interfaces
 
         IGenericRepository<TrainingRoom> TrainingRooms { get; }
 
-        IGenericRepository<WelderEvaluation> WelderEvaluations { get; }
+        IWelderEvaluationRepository WelderEvaluations { get; }
 
         IGenericRepository<WelderPracticalAnswer> WelderPracticalAnswers { get; }
 
