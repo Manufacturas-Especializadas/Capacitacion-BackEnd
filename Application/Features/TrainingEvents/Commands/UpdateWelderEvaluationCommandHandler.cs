@@ -1,18 +1,36 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 
 namespace Application.Features.TrainingEvents.Commands
 {
+    public class UpdatePracticalAnswerDto
+    {
+        public string SectionTitle { get; set; } = string.Empty;
+        public string QuestionText { get; set; } = string.Empty;
+        public int Score { get; set; }
+    }
+
+    public class UpdateUnionAnswerDto
+    {
+        public string AttributeName { get; set; } = string.Empty;
+        public string? AnswerText { get; set; }
+        public decimal? Score { get; set; }
+    }
+
     public class UpdateWelderEvaluationCommand : IRequest<int>
     {
         public int Id { get; set; }
+
         public string EmployeeNumber { get; set; } = string.Empty;
 
         public string EvaluatorName { get; set; } = string.Empty;
 
         public string ExclusiveTestReference { get; set; } = string.Empty;
+
+        public string? ExclusiveTestResult { get; set; }
 
         public int TotalPoints { get; set; }
 
@@ -23,6 +41,10 @@ namespace Application.Features.TrainingEvents.Commands
         public decimal FinalAverage { get; set; }
 
         public string MasteryLevel { get; set; } = string.Empty;
+
+        public List<UpdatePracticalAnswerDto> PracticalAnswers { get; set; } = new();
+
+        public List<UpdateUnionAnswerDto> UnionAnswers { get; set; } = new();
 
         public IFormFile? EvidencePhoto { get; set; }
 
@@ -39,7 +61,6 @@ namespace Application.Features.TrainingEvents.Commands
 
     public class UpdateWelderEvaluationCommandHandler(IUnitOfWork unitOfWork, IBlobStorageService blobStorageService) : IRequestHandler<UpdateWelderEvaluationCommand, int>
     {
-
         public async Task<int> Handle(UpdateWelderEvaluationCommand request, CancellationToken cancellationToken)
         {
             var eval = await unitOfWork.WelderEvaluations.GetByIdWithRelationsAsync(request.Id);
@@ -48,10 +69,34 @@ namespace Application.Features.TrainingEvents.Commands
             eval.EvaluatorName = request.EvaluatorName;
             eval.TotalPoints = request.TotalPoints;
             eval.ExclusiveTestReference = request.ExclusiveTestReference;
+            eval.TotalPoints = request.TotalPoints; 
             eval.FinalAverage = request.FinalAverage;
             eval.PracticalGrade = request.PracticalGrade;
             eval.UnionGrade = request.UnionGrade;
             eval.MasteryLevel = request.MasteryLevel;
+
+            eval.PracticalAnswers.Clear();
+            eval.UnionAnswers.Clear();
+
+            foreach (var pa in request.PracticalAnswers)
+            {
+                eval.PracticalAnswers.Add(new WelderPracticalAnswer
+                {
+                    SectionTitle = pa.SectionTitle,
+                    QuestionText = pa.QuestionText,
+                    Score = pa.Score
+                });
+            }
+
+            foreach (var ua in request.UnionAnswers)
+            {
+                eval.UnionAnswers.Add(new WelderUnionAnswer
+                {
+                    AttributeName = ua.AttributeName,
+                    AnswerText = ua.AnswerText,
+                    Score = ua.Score
+                });
+            }
 
             eval.EvidencePhotoUrl = await UploadIfPresent(request.EvidencePhoto, eval.EvidencePhotoUrl!);
             eval.SignatureColaboradorUrl = await UploadIfPresent(request.SignatureColaborador, eval.SignatureColaboradorUrl!);
