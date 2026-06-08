@@ -19,6 +19,7 @@ namespace Infrastructure
 
             services.AddScoped<ITrainingEventRepository, TrainingEventRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IWelderEvaluationRepository, WelderEvaluationRepository>();
             services.AddScoped<IProductionLineRepository, ProductionLineRepository>();
 
             services.AddScoped<IBlobStorageService, BlobStorageService>();
