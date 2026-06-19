@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Features.Employee.Command;
+using Application.Features.Employees.Command;
 using Application.Features.Employees.Queries;
 using Application.Features.TrainingEvents.Queries;
 using MediatR;
@@ -37,6 +38,17 @@ namespace API.Controllers
             var newEmployee = await mediator.Send(commnad);
 
             return Created("", newEmployee);
+        }
+
+        [HttpPut("updateEmployee/{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeDto request)
+        {
+            var command = new UpdateEmployeeCommand(id, request);
+            var success = await mediator.Send(command);
+
+            if (!success) return NotFound(new { message = "Empleado no encontrado para actualizar" });
+
+            return NoContent();
         }
     }
 }
