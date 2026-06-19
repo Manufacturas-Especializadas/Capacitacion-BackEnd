@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Features.Employee.Command;
+using Application.Features.Employees.Queries;
 using Application.Features.TrainingEvents.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,16 @@ namespace API.Controllers
         public async Task<IActionResult> GetAllEmployees()
         {
             var result = await mediator.Send(new GetEmployeesQuery());
+
+            return Ok(result);
+        }
+
+        [HttpGet("getById/{id}")]
+        public async Task<IActionResult> GetEmployeeById(int id)
+        {
+            var result = await mediator.Send(new GetEmployeeByIdQuery(id));
+
+            if (result == null) return NotFound(new { message = "Empleado no encontrado" });
 
             return Ok(result);
         }
