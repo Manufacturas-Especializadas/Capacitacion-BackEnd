@@ -50,5 +50,16 @@ namespace API.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("deleteEmployee/{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            var command = new DeleteEmployeeCommand(id);
+            var success = await mediator.Send(command);
+
+            if (!success) return NotFound(new { message = "Empleado no encontrado para eliminar" });
+
+            return NoContent();
+        }
     }
 }
