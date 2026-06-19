@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Features.Employees.Commands;
+using Application.Features.Employee.Command;
 using Application.Features.TrainingEvents.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;

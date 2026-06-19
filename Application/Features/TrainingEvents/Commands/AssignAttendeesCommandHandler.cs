@@ -37,7 +37,7 @@ namespace Application.Features.TrainingEvents.Commands
                         throw new ArgumentException($"La linea {row.LineName} no existe en el catálogo");
                     }
 
-                    employee = new Employee
+                    employee = new Domain.Entities.Employee
                     {
                         EmployeeNumber = row.EmployeeNumber,
                         Name = row.Name,
