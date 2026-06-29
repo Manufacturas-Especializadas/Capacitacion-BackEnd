@@ -1,9 +1,8 @@
 ﻿using Application.DTOs;
-using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Application.Features.Employees.Commands;
+namespace Application.Features.Employee.Command;
 
 public record CreateEmployeeCommand(CreateEmployeeDto Data) : IRequest<EmployeeDto>;
 
@@ -11,7 +10,7 @@ public class CreateEmployeeCommandHandler(IUnitOfWork unitOfWork) : IRequestHand
 {
     public async Task<EmployeeDto> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var newEmployee = new Employee
+        var newEmployee = new Domain.Entities.Employee
         {
             EmployeeNumber = request.Data.EmployeeNumber,
             Name = request.Data.Name,
