@@ -13,6 +13,7 @@ namespace Infrastructure.Services
 
         private readonly string _containerName = "trainingevents";
         private readonly string _containerNameWelders = "welderschecklist";
+        private readonly string _containerNameTrainingReports = "trainingreports";
 
         public async Task<string> UploadSignatureAsync(string base64Image, string fileName)
         {
