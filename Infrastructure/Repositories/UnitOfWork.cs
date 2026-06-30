@@ -13,6 +13,8 @@ namespace Infrastructure.Repositories
         IGenericRepository<EventAttendee> eventAttendees,
         IGenericRepository<TopicEvaluation> topicEvaluations,
         IGenericRepository<TrainingRoom>? trainingRooms,
+        IGenericRepository<TrainingTopic> trainingTopics,
+        IGenericRepository<TrainingReport> trainingReports,
         IGenericRepository<WelderPracticalAnswer> welderPracticalAnswer,
         IGenericRepository<WelderUnionAnswer> welderUnionAnswer) : IUnitOfWork
     {
@@ -23,6 +25,10 @@ namespace Infrastructure.Repositories
         public IProductionLineRepository ProductionLines { get; } = productionLines;
 
         public IWelderEvaluationRepository WelderEvaluations { get; } = welderEvaluations;
+
+        public IGenericRepository<TrainingTopic> TrainingTopics {  get; } = trainingTopics;
+
+        public IGenericRepository<TrainingReport> TrainingReports { get;  } = trainingReports;
 
         public IGenericRepository<EventAttendee> EventAttendees { get; } = eventAttendees;
         public IGenericRepository<TopicEvaluation> TopicEvaluations { get; } = topicEvaluations;

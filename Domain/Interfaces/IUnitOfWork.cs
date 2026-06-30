@@ -11,6 +11,9 @@ namespace Domain.Interfaces
         IGenericRepository<EventAttendee> EventAttendees { get; }
         IGenericRepository<TopicEvaluation> TopicEvaluations { get; }
 
+        IGenericRepository<TrainingTopic> TrainingTopics { get; }
+        IGenericRepository<TrainingReport> TrainingReports { get; }
+
         IGenericRepository<TrainingRoom> TrainingRooms { get; }
 
         IWelderEvaluationRepository WelderEvaluations { get; }
