@@ -26,6 +26,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<WelderUnionAnswer> WelderUnionAnswers => Set<WelderUnionAnswer>();
 
+        public DbSet<Tutors> Tutors => Set<Tutors>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
