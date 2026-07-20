@@ -26,6 +26,10 @@ namespace Domain.Interfaces
 
         IGenericRepository<Tutors> Tutors { get; }
 
+        IGenericRepository<TutoringProgram> TutoringPrograms { get; }
+
+        IGenericRepository<Answer> Answers { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
