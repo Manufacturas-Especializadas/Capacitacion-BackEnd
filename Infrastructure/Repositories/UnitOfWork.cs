@@ -17,6 +17,7 @@ namespace Infrastructure.Repositories
         IGenericRepository<TrainingReport> trainingReports,
         IGenericRepository<WelderPracticalAnswer> welderPracticalAnswer,
         IGenericRepository<WeldingReportUnionType> weldingReportUnionTypes,
+        IGenericRepository<Tutors> tutors,
         IGenericRepository<WelderUnionAnswer> welderUnionAnswer) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
@@ -38,6 +39,8 @@ namespace Infrastructure.Repositories
         public IGenericRepository<WelderUnionAnswer> WelderUnionAnswers { get; } = welderUnionAnswer;
 
         public IGenericRepository<WeldingReportUnionType> WeldingReportUnionTypes { get; } = weldingReportUnionTypes;
+
+        public IGenericRepository<Tutors> Tutors { get; } = tutors;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

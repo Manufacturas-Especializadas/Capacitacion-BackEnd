@@ -24,6 +24,8 @@ namespace Domain.Interfaces
 
         IGenericRepository<WelderUnionAnswer> WelderUnionAnswers { get; }
 
+        IGenericRepository<Tutors> Tutors { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
