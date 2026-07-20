@@ -28,6 +28,22 @@ namespace Infrastructure.Persistence
 
         public DbSet<Tutors> Tutors => Set<Tutors>();
 
+        public DbSet<FollowUpWeek> FollowUpWeeks => Set<FollowUpWeek>();
+
+        public DbSet<Sections> Sections => Set<Sections>();
+
+        public DbSet<QuestionTypes> QuestionTypes => Set<QuestionTypes>();
+
+        public DbSet<OptionsCatalog> OptionsCatalogs => Set<OptionsCatalog>();
+
+        public DbSet<Question> Questions => Set<Question>();
+
+        public DbSet<QuestionOption> QuestionOptions => Set<QuestionOption>();
+
+        public DbSet<TutoringProgram> TutoringPrograms => Set<TutoringProgram>();
+
+        public DbSet<Answer> Answers => Set<Answer>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
