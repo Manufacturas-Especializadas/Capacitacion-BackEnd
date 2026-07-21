@@ -1,5 +1,4 @@
-﻿using static System.Collections.Specialized.BitVector32;
-
+﻿
 namespace Domain.Entities
 {
     public class Question
@@ -22,7 +21,7 @@ namespace Domain.Entities
 
         public int? ShowWhenOptionId { get; set; }
 
-        public Section Section { get; set; }
+        public Sections Section { get; set; }
 
         public QuestionTypes QuestionType { get; set; } = null!;
 
