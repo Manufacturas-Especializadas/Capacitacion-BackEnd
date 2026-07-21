@@ -24,7 +24,7 @@ namespace Domain.Entities
 
         public Section Section { get; set; }
 
-        public QuestionType QuestionType { get; set; } = null!;
+        public QuestionTypes QuestionType { get; set; } = null!;
 
         public Question? ParentQuestion { get; set; }
 

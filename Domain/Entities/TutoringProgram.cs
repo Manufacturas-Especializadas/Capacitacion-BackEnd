@@ -20,6 +20,6 @@
 
         public FollowUpWeek Week { get; set; } = null!;
 
-        public ICollection<Answer> Answers { get; set; } = new List<Answer>()
+        public ICollection<Answer> Answers { get; set; } = new List<Answer>();
     }
 }
