@@ -23,13 +23,13 @@ namespace Application.Features.TrainingReports.Commands
             program.WeekId = request.Data.WeekId;
 
             unitOfWork.TutoringPrograms.Update(program);
-            
+
             var oldAnswers = await unitOfWork.Answers.GetAllAsync();
             var currentProgramAnswers = oldAnswers.Where(a => a.TutoringProgramId == program.Id).ToList();
 
             if (currentProgramAnswers.Any())
             {
-                unitOfWork.Answers.Delete(currentProgramAnswers);
+                unitOfWork.Answers.DeleteRange(currentProgramAnswers);
             }
 
             var newAnswers = request.Data.Answers.Select(a => new Answer
