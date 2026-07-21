@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Infrastructure.Repositories
 {
@@ -20,7 +21,12 @@ namespace Infrastructure.Repositories
         IGenericRepository<Tutors> tutors,
         IGenericRepository<TutoringProgram> tutoringPrograms,
         IGenericRepository<Answer> answers,
-        IGenericRepository<WelderUnionAnswer> welderUnionAnswer) : IUnitOfWork
+        IGenericRepository<WelderUnionAnswer> welderUnionAnswer,
+        IGenericRepository<Sections> sections,
+        IGenericRepository<Question> questions,
+        IGenericRepository<QuestionTypes> questionTypes,
+        IGenericRepository<QuestionOption> questionOptions,
+        IGenericRepository<OptionsCatalog> optionsCatalogs) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -47,6 +53,16 @@ namespace Infrastructure.Repositories
         public IGenericRepository<TutoringProgram> TutoringPrograms { get; } = tutoringPrograms;
 
         public IGenericRepository<Answer> Answers { get; } = answers;
+
+        public IGenericRepository<Sections> Sections { get; } = sections;
+
+        public IGenericRepository<Question> Questions { get; } = questions;
+
+        public IGenericRepository<QuestionTypes> QuestionTypes { get; } = questionTypes;
+
+        public IGenericRepository<QuestionOption> QuestionOptions { get; } = questionOptions;
+
+        public IGenericRepository<OptionsCatalog> OptionsCatalogs { get; } = optionsCatalogs;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

@@ -30,6 +30,16 @@ namespace Domain.Interfaces
 
         IGenericRepository<Answer> Answers { get; }
 
+        IGenericRepository<Sections> Sections { get; }
+
+        IGenericRepository<Question> Questions { get; }
+
+        IGenericRepository<QuestionTypes> QuestionTypes { get; }
+
+        IGenericRepository<QuestionOption> QuestionOptions { get; }
+
+        IGenericRepository<OptionsCatalog> OptionsCatalogs { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
