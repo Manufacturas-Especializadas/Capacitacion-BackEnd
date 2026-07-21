@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Features.TrainingReports.Commands;
 using Application.Features.TutoringProgram.Commands;
+using Application.Features.TutoringProgram.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,15 @@ namespace API.Controllers
     [ApiController]
     public class TutoringProgramsController(IMediator mediator) : ControllerBase
     {
+        [HttpGet("Form")]
+        public async Task<IActionResult> GetFormTemplate()
+        {
+            var query = new GetTutoringFormQuery();
+            var result = await mediator.Send(query);
+
+            return Ok(result);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateTutoringProgramDto request)
         {
