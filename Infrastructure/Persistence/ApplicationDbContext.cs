@@ -28,7 +28,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<Tutors> Tutors => Set<Tutors>();
 
-        public DbSet<FollowUpWeek> FollowUpWeeks => Set<FollowUpWeek>();
+        public DbSet<FollowUpWeek> FollowUpWeek => Set<FollowUpWeek>();
 
         public DbSet<Sections> Sections => Set<Sections>();
 
