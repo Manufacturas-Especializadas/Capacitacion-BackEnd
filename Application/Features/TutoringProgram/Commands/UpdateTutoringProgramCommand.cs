@@ -3,7 +3,7 @@ using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Application.Features.TrainingReports.Commands
+namespace Application.Features.TutoringProgram.Commands
 {
     public record UpdateTutoringProgramCommand(UpdateTutoringProgramDto Data) : IRequest<bool>;
 

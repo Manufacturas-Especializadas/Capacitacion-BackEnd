@@ -1,7 +1,7 @@
 ﻿using Domain.Interfaces;
 using MediatR;
 
-namespace Application.Features.TrainingReports.Commands
+namespace Application.Features.TutoringProgram.Commands
 {
     public record DeleteTutoringProgramCommand(int Id) : IRequest<bool>;
 
