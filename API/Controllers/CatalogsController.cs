@@ -19,5 +19,17 @@ namespace API.Controllers
         {
             return Ok(await mediator.Send(new GetLinesQuery()));
         }
+
+        [HttpGet("tutors")]
+        public async Task<IActionResult> GetTutors()
+        {
+            return Ok(await mediator.Send(new GetTutors()));
+        }
+
+        [HttpGet("weeks")]
+        public async Task<IActionResult> GetWeeks()
+        {
+            return Ok(await mediator.Send(new GetWeek()));
+        }
     }
 }

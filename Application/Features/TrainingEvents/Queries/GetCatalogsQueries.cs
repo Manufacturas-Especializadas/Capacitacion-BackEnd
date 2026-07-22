@@ -38,4 +38,38 @@ namespace Application.Features.TrainingEvents.Queries
             .ToList();
         }
     }
+
+    public record GetTutors(): IRequest<List<CatalogItemDto>>;
+
+    public class GetTutorsHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetTutors, List<CatalogItemDto>>
+    {
+        public async Task<List<CatalogItemDto>> Handle(GetTutors request, CancellationToken cancellationToken)
+        {
+            var tutors = await unitOfWork.Tutors.GetAllAsync();
+            return tutors.Select(t => new CatalogItemDto
+            {
+                Id = t.Id,
+                Name = t.TutorName
+            })
+            .OrderBy(r => r.Id)
+            .ToList();
+        }
+    }
+
+    public record GetWeek() : IRequest<List<CatalogItemDto>>;
+
+    public class GetWeekHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetWeek, List<CatalogItemDto>>
+    {
+        public async Task<List<CatalogItemDto>> Handle(GetWeek request, CancellationToken cancellationToken)
+        {
+            var weeks = await unitOfWork.FollowUpWeek.GetAllAsync();
+            return weeks.Select(t => new CatalogItemDto
+            {
+                Id = t.Id,
+                Name = t.WeekName
+            })
+            .OrderBy(r => r.Id)
+            .ToList();
+        }
+    }
 }
