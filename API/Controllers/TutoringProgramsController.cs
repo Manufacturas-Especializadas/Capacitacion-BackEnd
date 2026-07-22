@@ -19,6 +19,15 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var query = new GetAllTutoringProgramsQuery();
+            var result = await mediator.Send(query);
+
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
