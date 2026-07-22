@@ -1,5 +1,4 @@
 ﻿using Application.DTOs;
-using Application.Features.TrainingReports.Commands;
 using Application.Features.TutoringProgram.Commands;
 using Application.Features.TutoringProgram.Queries;
 using MediatR;
@@ -17,6 +16,16 @@ namespace API.Controllers
             var query = new GetTutoringFormQuery();
             var result = await mediator.Send(query);
 
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var query = new GetTutoringProgramByIdQuery(id);
+            var result = await mediator.Send(query);
+
+            if (result == null) return NotFound();
             return Ok(result);
         }
 
