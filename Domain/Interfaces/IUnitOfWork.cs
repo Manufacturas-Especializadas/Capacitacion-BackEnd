@@ -40,6 +40,8 @@ namespace Domain.Interfaces
 
         IGenericRepository<OptionsCatalog> OptionsCatalogs { get; }
 
+        IGenericRepository<FollowUpWeek> FollowUpWeek { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
