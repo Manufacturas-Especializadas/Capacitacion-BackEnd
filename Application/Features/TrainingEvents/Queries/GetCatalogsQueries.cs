@@ -55,4 +55,21 @@ namespace Application.Features.TrainingEvents.Queries
             .ToList();
         }
     }
+
+    public record GetWeek() : IRequest<List<CatalogItemDto>>;
+
+    public class GetWeekHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetWeek, List<CatalogItemDto>>
+    {
+        public async Task<List<CatalogItemDto>> Handle(GetWeek request, CancellationToken cancellationToken)
+        {
+            var weeks = await unitOfWork.FollowUpWeek.GetAllAsync();
+            return weeks.Select(t => new CatalogItemDto
+            {
+                Id = t.Id,
+                Name = t.WeekName
+            })
+            .OrderBy(r => r.Id)
+            .ToList();
+        }
+    }
 }
