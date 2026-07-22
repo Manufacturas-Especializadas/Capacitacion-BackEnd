@@ -40,7 +40,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<QuestionOption> QuestionOptions => Set<QuestionOption>();
 
-        public DbSet<TutoringProgram> TutoringPrograms => Set<TutoringProgram>();
+        public DbSet<TutoringProgram> TutoringProgram => Set<TutoringProgram>();
 
         public DbSet<Answer> Answers => Set<Answer>();
 
