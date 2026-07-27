@@ -42,6 +42,8 @@ namespace Domain.Interfaces
 
         IGenericRepository<FollowUpWeek> FollowUpWeek { get; }
 
+        IGenericRepository<User> Users { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

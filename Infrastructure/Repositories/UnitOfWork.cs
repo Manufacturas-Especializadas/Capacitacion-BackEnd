@@ -27,7 +27,8 @@ namespace Infrastructure.Repositories
         IGenericRepository<QuestionTypes> questionTypes,
         IGenericRepository<QuestionOption> questionOptions,
         IGenericRepository<OptionsCatalog> optionsCatalogs,
-        IGenericRepository<FollowUpWeek> followUpWeek) : IUnitOfWork
+        IGenericRepository<FollowUpWeek> followUpWeek,
+        IGenericRepository<User> users) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -66,6 +67,8 @@ namespace Infrastructure.Repositories
         public IGenericRepository<OptionsCatalog> OptionsCatalogs { get; } = optionsCatalogs;
 
         public IGenericRepository<FollowUpWeek> FollowUpWeek { get; } = followUpWeek;
+
+        public IGenericRepository<User> Users { get; } = users;
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
