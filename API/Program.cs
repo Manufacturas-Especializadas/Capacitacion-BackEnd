@@ -16,6 +16,15 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Capacitacion MESA API",
         Version = "v1"
     });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Autorización JWT usando el esquema Bearer. \r\n\r\n Escribe 'Bearer' [espacio] y luego tu token.\r\n\r\nEjemplo: 'Bearer eyJhbGci...'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
 });
 
 var allowedConnection = builder.Configuration.GetValue<string>("OrigenesPermitidos")!.Split(',');
