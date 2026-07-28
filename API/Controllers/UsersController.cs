@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Application.Features.Auth;
+﻿using Application.Features.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Application.DTOs;
 using MediatR;
+using Application.Features.Users.Queries;
 
 namespace API.Controllers
 {
@@ -10,6 +10,13 @@ namespace API.Controllers
     [ApiController]
     public class UsersController(IMediator mediator) : ControllerBase
     {
+
+        [HttpGet("getRoles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await mediator.Send(new GetRolesQuery());
+            return Ok(roles);
+        }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateUserDto request)
