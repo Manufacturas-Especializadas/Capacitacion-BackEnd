@@ -44,6 +44,8 @@ namespace Domain.Interfaces
 
         IGenericRepository<User> Users { get; }
 
+        IGenericRepository<Role> Roles { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
