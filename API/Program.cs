@@ -24,7 +24,7 @@ builder.Services.AddSwaggerGen(c =>
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
-    });
+    });    
 });
 
 var allowedConnection = builder.Configuration.GetValue<string>("OrigenesPermitidos")!.Split(',');
@@ -47,6 +47,9 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseCors("AllowSpecificOrigins");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
