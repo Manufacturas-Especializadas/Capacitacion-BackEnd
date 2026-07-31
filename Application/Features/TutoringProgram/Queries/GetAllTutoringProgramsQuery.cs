@@ -10,7 +10,7 @@ namespace Application.Features.TutoringProgram.Queries
     {
         public async Task<IEnumerable<TutoringProgramListDto>> Handle(GetAllTutoringProgramsQuery request, CancellationToken cancellationToken)
         {
-            var programs = await unitOfWork.TutoringPrograms.GetAllAsync();
+            var programs = await unitOfWork.TutoringPrograms.GetAllAsync(p => p.Tutor);
 
             if (programs == null || !programs.Any())
             {
@@ -21,6 +21,7 @@ namespace Application.Features.TutoringProgram.Queries
             {
                 Id = p.Id,
                 TutorId = p.TutorId,
+                TutorName = p.Tutor?.TutorName ?? "",
                 CollaboratorName = p.CollaboratorName,
                 PayrollNumber = p.PayrollNumber,
                 Area = p.Area,

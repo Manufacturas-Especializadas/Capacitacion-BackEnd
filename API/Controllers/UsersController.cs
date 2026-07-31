@@ -18,6 +18,14 @@ namespace API.Controllers
             return Ok(roles);
         }
 
+        [HttpGet("getUsers")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await mediator.Send(new GetUsersQuery());
+
+            return Ok(users);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateUserDto request)
         {
