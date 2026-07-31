@@ -1,8 +1,10 @@
 using Application;
+using Domain.Interfaces;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,6 +63,26 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
         ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var unitOfWork = context.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
+
+            var userIdStr = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                var user = await unitOfWork.Users.GetByIdAsync(userId);
+
+                if (user == null || !user.IsActive)
+                {
+                    context.Fail("El usuario ha sido desactivado o no existe.");
+                }
+            }
+        }
     };
 });
 
