@@ -15,7 +15,7 @@ namespace Infrastructure.Repositories
         IGenericRepository<TopicEvaluation> topicEvaluations,
         IGenericRepository<TrainingRoom>? trainingRooms,
         IGenericRepository<TrainingTopic> trainingTopics,
-        IGenericRepository<TrainingReport> trainingReports,
+        ITrainingReportRepository trainingReports,
         IGenericRepository<WelderPracticalAnswer> welderPracticalAnswer,
         IGenericRepository<WeldingReportUnionType> weldingReportUnionTypes,
         IGenericRepository<Tutors> tutors,
@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
 
         public IGenericRepository<TrainingTopic> TrainingTopics {  get; } = trainingTopics;
 
-        public IGenericRepository<TrainingReport> TrainingReports { get;  } = trainingReports;
+        public ITrainingReportRepository TrainingReports { get;  } = trainingReports;
 
         public IGenericRepository<EventAttendee> EventAttendees { get; } = eventAttendees;
         public IGenericRepository<TopicEvaluation> TopicEvaluations { get; } = topicEvaluations;

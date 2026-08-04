@@ -16,7 +16,7 @@ namespace Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("Connection")));
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
+            services.AddScoped<ITrainingReportRepository, TrainingReportRepository>();
             services.AddScoped<ITrainingEventRepository, TrainingEventRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IWelderEvaluationRepository, WelderEvaluationRepository>();

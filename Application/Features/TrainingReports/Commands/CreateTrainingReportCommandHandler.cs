@@ -162,7 +162,7 @@ namespace Application.Features.TrainingReports.Commands
                 report.Attendees.Add(attendee);
             }
 
-            unitOfWork.TrainingReports.AddAsync(report);
+            await unitOfWork.TrainingReports.AddAsync(report);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return report.Id;
