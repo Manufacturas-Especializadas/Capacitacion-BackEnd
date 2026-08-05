@@ -1,6 +1,11 @@
 using Application;
+using Domain.Interfaces;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +21,15 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Capacitacion MESA API",
         Version = "v1"
     });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Autorización JWT usando el esquema Bearer. \r\n\r\n Escribe 'Bearer' [espacio] y luego tu token.\r\n\r\nEjemplo: 'Bearer eyJhbGci...'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });    
 });
 
 var allowedConnection = builder.Configuration.GetValue<string>("OrigenesPermitidos")!.Split(',');
@@ -29,6 +43,49 @@ builder.Services.AddCors(options =>
     });
 });
 
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var secretKey = jwtSettings["SecretKey"]!;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var unitOfWork = context.HttpContext.RequestServices.GetRequiredService<IUnitOfWork>();
+
+            var userIdStr = context.Principal?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                var user = await unitOfWork.Users.GetByIdAsync(userId);
+
+                if (user == null || !user.IsActive)
+                {
+                    context.Fail("El usuario ha sido desactivado o no existe.");
+                }
+            }
+        }
+    };
+});
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -38,6 +95,9 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseCors("AllowSpecificOrigins");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

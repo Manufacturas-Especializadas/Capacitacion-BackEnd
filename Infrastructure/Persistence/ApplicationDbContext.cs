@@ -44,6 +44,10 @@ namespace Infrastructure.Persistence
 
         public DbSet<Answer> Answers => Set<Answer>();
 
+        public DbSet<Role> Roles => Set<Role>();
+
+        public DbSet<User> Users => Set<User>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
