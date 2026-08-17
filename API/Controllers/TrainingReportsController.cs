@@ -12,11 +12,33 @@ namespace API.Controllers
     public class TrainingReportsController(IMediator mediator) : ControllerBase
     {
         [HttpPost("create")]
-        public async Task<IActionResult> CreateTrainingReport([FromForm] CreateTrainingReportCommand command)
+        public async Task<IActionResult> CreateTrainingReport(
+    [FromForm] CreateTrainingReportCommand command
+)
         {
-            var reportId = await mediator.Send(command);
+            var result =
+                await mediator.Send(command);
 
-            return Ok(new { message = "Reporte de entrenamiento creado con éxito", id = reportId });
+            return result.Status switch
+            {
+                CreateTrainingReportStatus.Created =>
+                    Ok(new
+                    {
+                        message = result.Message,
+                        id = result.ReportId
+                    }),
+
+                CreateTrainingReportStatus.InvalidRequest =>
+                    BadRequest(new
+                    {
+                        message = result.Message
+                    }),
+
+                _ =>
+                    StatusCode(
+                        StatusCodes.Status500InternalServerError
+                    )
+            };
         }
 
         [HttpGet("getById/{id:int}")]

@@ -10,6 +10,6 @@
 
         public string TopicName { get; set; } = string.Empty;
 
-        public List<TrainingReportAttendee> Attendees { get; set; } = new();
+        public List<TrainingReportAttendeeTopic> Attendees { get; set; } = new();
     }
 }

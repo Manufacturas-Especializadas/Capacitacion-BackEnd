@@ -166,6 +166,211 @@ namespace Application.Features.TrainingReports.Commands
         }
 
         // Métodos privados de validación y sincronización.
+        private static bool HasDailyHours(
+    UpdateTrainingReportAttendeeTopicDto topic
+)
+        {
+            return
+                topic.HoursMonday.HasValue ||
+                topic.HoursTuesday.HasValue ||
+                topic.HoursWednesday.HasValue ||
+                topic.HoursThursday.HasValue ||
+                topic.HoursFriday.HasValue ||
+                topic.HoursSaturday.HasValue ||
+                topic.HoursSunday.HasValue;
+        }
+
+
+        private static decimal CalculateDailyTotal(
+            UpdateTrainingReportAttendeeTopicDto topic
+        )
+        {
+            return
+                (topic.HoursMonday ?? 0m) +
+                (topic.HoursTuesday ?? 0m) +
+                (topic.HoursWednesday ?? 0m) +
+                (topic.HoursThursday ?? 0m) +
+                (topic.HoursFriday ?? 0m) +
+                (topic.HoursSaturday ?? 0m) +
+                (topic.HoursSunday ?? 0m);
+        }
+
+
+        private static decimal CalculateStoredDailyTotal(
+            TrainingReportAttendeeTopic topic
+        )
+        {
+            return
+                (topic.HoursMonday ?? 0m) +
+                (topic.HoursTuesday ?? 0m) +
+                (topic.HoursWednesday ?? 0m) +
+                (topic.HoursThursday ?? 0m) +
+                (topic.HoursFriday ?? 0m) +
+                (topic.HoursSaturday ?? 0m) +
+                (topic.HoursSunday ?? 0m);
+        }
+
+
+        private static string? ValidateDayHours(
+            int topicId,
+            string dayName,
+            bool daySelected,
+            decimal? hours
+        )
+        {
+            if (!daySelected && !hours.HasValue)
+            {
+                return null;
+            }
+
+
+            if (!daySelected && hours.HasValue)
+            {
+                return
+                    $"El tema con ID {topicId} tiene horas para {dayName}, " +
+                    "pero ese día no está seleccionado.";
+            }
+
+
+            if (daySelected && !hours.HasValue)
+            {
+                return
+                    $"Debes indicar las horas de {dayName} " +
+                    $"para el tema con ID {topicId}.";
+            }
+
+
+            if (
+                hours.HasValue &&
+                (
+                    hours.Value < 0m ||
+                    hours.Value > 8m
+                )
+            )
+            {
+                return
+                    $"Las horas de {dayName} para el tema con ID {topicId} " +
+                    "deben estar entre 0 y 8.";
+            }
+
+
+            return null;
+        }
+
+
+        private static string? ValidateTopicHours(
+            UpdateTrainingReportAttendeeTopicDto topic
+        )
+        {
+            /*
+             * Petición anterior o registro histórico.
+             */
+            if (!HasDailyHours(topic))
+            {
+                if (
+                    topic.TotalHours.HasValue &&
+                    (
+                        topic.TotalHours.Value < 0m ||
+                        topic.TotalHours.Value > 56m
+                    )
+                )
+                {
+                    return
+                        $"Las horas totales del tema con ID {topic.TopicId} " +
+                        "deben estar entre 0 y 56.";
+                }
+
+                return null;
+            }
+
+
+            var error = ValidateDayHours(
+                topic.TopicId,
+                "lunes",
+                topic.DayMonday,
+                topic.HoursMonday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+
+            error = ValidateDayHours(
+                topic.TopicId,
+                "martes",
+                topic.DayTuesday,
+                topic.HoursTuesday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+
+            error = ValidateDayHours(
+                topic.TopicId,
+                "miércoles",
+                topic.DayWednesday,
+                topic.HoursWednesday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+
+            error = ValidateDayHours(
+                topic.TopicId,
+                "jueves",
+                topic.DayThursday,
+                topic.HoursThursday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+
+            error = ValidateDayHours(
+                topic.TopicId,
+                "viernes",
+                topic.DayFriday,
+                topic.HoursFriday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+
+            error = ValidateDayHours(
+                topic.TopicId,
+                "sábado",
+                topic.DaySaturday,
+                topic.HoursSaturday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+
+            return ValidateDayHours(
+                topic.TopicId,
+                "domingo",
+                topic.DaySunday,
+                topic.HoursSunday
+            );
+        }
+
+
         private static string? ValidateRequest(
             UpdateTrainingReportCommand request
         )
@@ -238,6 +443,58 @@ namespace Application.Features.TrainingReports.Commands
                 {
                     return
                         "La petición contiene un ID de asistente no válido.";
+                }
+
+                if (
+                    attendee.Topics is { Count: > 0 } &&
+                    attendee.Topics
+                        .GroupBy(topic => topic.TopicId)
+                        .Any(group => group.Count() > 1)
+                )
+                {
+                    return
+                        "Un asistente no puede tener el mismo tema asignado más de una vez.";
+                }
+
+
+                var topicAssignments =
+                    ResolveTopicAssignments(
+                        attendee
+                    );
+
+
+                if (topicAssignments.Count == 0)
+                {
+                    return
+                        "Cada asistente debe tener al menos un tema.";
+                }
+
+
+                if (
+                    topicAssignments.Any(
+                        topic =>
+                            topic.TopicId <= 0
+                    )
+                )
+                {
+                    return
+                        "La petición contiene un tema no válido.";
+                }
+
+
+                foreach (
+                    var topicAssignment in topicAssignments
+                )
+                {
+                    var hoursError =
+                        ValidateTopicHours(
+                            topicAssignment
+                        );
+
+                    if (hoursError is not null)
+                    {
+                        return hoursError;
+                    }
                 }
 
                 if (attendee.EmployeeId <= 0)
@@ -323,6 +580,49 @@ namespace Application.Features.TrainingReports.Commands
             return null;
         }
 
+        private static List<UpdateTrainingReportAttendeeTopicDto>
+    ResolveTopicAssignments(
+        UpdateTrainingReportAttendeeDto attendee)
+        {
+            /*
+             * Nuevo contrato:
+             * cada tema ya trae sus propios días y horas.
+             */
+            if (attendee.Topics is { Count: > 0 })
+            {
+                return attendee.Topics
+                    .GroupBy(topic => topic.TopicId)
+                    .Select(group => group.First())
+                    .ToList();
+            }
+
+            /*
+             * Compatibilidad temporal con el frontend anterior:
+             * TopicIds + días almacenados a nivel asistente.
+             */
+            return (attendee.TopicIds ?? new List<int>())
+                .Distinct()
+                .Select(topicId =>
+                    new UpdateTrainingReportAttendeeTopicDto
+                    {
+                        TopicId = topicId,
+
+                        DayMonday = attendee.DayMonday,
+                        DayTuesday = attendee.DayTuesday,
+                        DayWednesday = attendee.DayWednesday,
+                        DayThursday = attendee.DayThursday,
+                        DayFriday = attendee.DayFriday,
+                        DaySaturday = attendee.DaySaturday,
+                        DaySunday = attendee.DaySunday,
+
+                        /*
+                         * El contrato anterior no capturaba horas.
+                         */
+                        TotalHours = null
+                    })
+                .ToList();
+        }
+
         private static bool HasFile(IFormFile? file)
         {
             return file is not null && file.Length > 0;
@@ -379,8 +679,8 @@ namespace Application.Features.TrainingReports.Commands
             var topicIds = attendees
                 .SelectMany(
                     attendee =>
-                        attendee.TopicIds ??
-                        new List<int>()
+                        ResolveTopicAssignments(attendee)
+                .Select(topic => topic.TopicId)
                 )
                 .Distinct()
                 .ToList();
@@ -550,6 +850,215 @@ namespace Application.Features.TrainingReports.Commands
             }
         }
 
+        private static void UpdateTopicAssignmentData(
+    TrainingReportAttendeeTopic assignment,
+    UpdateTrainingReportAttendeeTopicDto requested
+)
+        {
+            // =========================================================
+            // DÍAS
+            // =========================================================
+
+            assignment.DayMonday =
+                requested.DayMonday;
+
+            assignment.DayTuesday =
+                requested.DayTuesday;
+
+            assignment.DayWednesday =
+                requested.DayWednesday;
+
+            assignment.DayThursday =
+                requested.DayThursday;
+
+            assignment.DayFriday =
+                requested.DayFriday;
+
+            assignment.DaySaturday =
+                requested.DaySaturday;
+
+            assignment.DaySunday =
+                requested.DaySunday;
+
+
+            // =========================================================
+            // CONTRATO NUEVO
+            //
+            // Llegaron horas individuales.
+            // =========================================================
+
+            if (HasDailyHours(requested))
+            {
+                assignment.HoursMonday =
+                    requested.HoursMonday;
+
+                assignment.HoursTuesday =
+                    requested.HoursTuesday;
+
+                assignment.HoursWednesday =
+                    requested.HoursWednesday;
+
+                assignment.HoursThursday =
+                    requested.HoursThursday;
+
+                assignment.HoursFriday =
+                    requested.HoursFriday;
+
+                assignment.HoursSaturday =
+                    requested.HoursSaturday;
+
+                assignment.HoursSunday =
+                    requested.HoursSunday;
+
+
+                /*
+                 * Ignoramos TotalHours enviado por el cliente
+                 * y lo calculamos nosotros.
+                 */
+                assignment.TotalHours =
+                    CalculateDailyTotal(
+                        requested
+                    );
+
+                return;
+            }
+
+
+            // =========================================================
+            // CONTRATO LEGACY / HISTÓRICO
+            //
+            // No llegaron HoursX.
+            //
+            // No queremos borrar automáticamente información diaria
+            // que ya pudiera existir en la base de datos.
+            // =========================================================
+
+
+            /*
+             * Si el usuario desmarcó un día, sí debemos eliminar
+             * sus horas almacenadas.
+             *
+             * Esto además mantiene consistencia con los CHECK
+             * constraints de SQL.
+             */
+            if (!requested.DayMonday)
+            {
+                assignment.HoursMonday = null;
+            }
+
+            if (!requested.DayTuesday)
+            {
+                assignment.HoursTuesday = null;
+            }
+
+            if (!requested.DayWednesday)
+            {
+                assignment.HoursWednesday = null;
+            }
+
+            if (!requested.DayThursday)
+            {
+                assignment.HoursThursday = null;
+            }
+
+            if (!requested.DayFriday)
+            {
+                assignment.HoursFriday = null;
+            }
+
+            if (!requested.DaySaturday)
+            {
+                assignment.HoursSaturday = null;
+            }
+
+            if (!requested.DaySunday)
+            {
+                assignment.HoursSunday = null;
+            }
+
+
+            /*
+             * Revisamos si todavía conservamos
+             * alguna hora diaria conocida.
+             */
+            var hasStoredDailyHours =
+                assignment.HoursMonday.HasValue ||
+                assignment.HoursTuesday.HasValue ||
+                assignment.HoursWednesday.HasValue ||
+                assignment.HoursThursday.HasValue ||
+                assignment.HoursFriday.HasValue ||
+                assignment.HoursSaturday.HasValue ||
+                assignment.HoursSunday.HasValue;
+
+
+            /*
+             * ¿Conocemos las horas de TODOS los días
+             * actualmente seleccionados?
+             */
+            var allSelectedDaysHaveHours =
+                (
+                    !requested.DayMonday ||
+                    assignment.HoursMonday.HasValue
+                )
+                &&
+                (
+                    !requested.DayTuesday ||
+                    assignment.HoursTuesday.HasValue
+                )
+                &&
+                (
+                    !requested.DayWednesday ||
+                    assignment.HoursWednesday.HasValue
+                )
+                &&
+                (
+                    !requested.DayThursday ||
+                    assignment.HoursThursday.HasValue
+                )
+                &&
+                (
+                    !requested.DayFriday ||
+                    assignment.HoursFriday.HasValue
+                )
+                &&
+                (
+                    !requested.DaySaturday ||
+                    assignment.HoursSaturday.HasValue
+                )
+                &&
+                (
+                    !requested.DaySunday ||
+                    assignment.HoursSunday.HasValue
+                );
+
+
+            /*
+             * Si conocemos toda la distribución diaria,
+             * mantenemos el total sincronizado.
+             */
+            if (
+                hasStoredDailyHours &&
+                allSelectedDaysHaveHours
+            )
+            {
+                assignment.TotalHours =
+                    CalculateStoredDailyTotal(
+                        assignment
+                    );
+
+                return;
+            }
+
+
+            /*
+             * Si todavía estamos ante un registro histórico
+             * o una petición del frontend anterior,
+             * conservamos el TotalHours recibido.
+             */
+            assignment.TotalHours =
+                requested.TotalHours;
+        }
+
         private async Task SynchronizeAttendeesAsync(
             TrainingReport report,
             IReadOnlyCollection<
@@ -619,9 +1128,12 @@ namespace Application.Features.TrainingReports.Commands
                     report.Attendees.Add(attendee);
                 }
 
+                var topicAssignments = ResolveTopicAssignments(requested);
+
                 UpdateAttendeeData(
                     attendee,
-                    requested
+                    requested,
+                    topicAssignments
                 );
 
                 attendee.TraineeSignatureUrl =
@@ -649,19 +1161,92 @@ namespace Application.Features.TrainingReports.Commands
                     );
 
                 /*
-                 * Reemplazamos solamente las relaciones,
-                 * no eliminamos los temas del catálogo.
+ * Sincronizamos las asignaciones de temas
+ * sin eliminar los temas del catálogo.
+ */
+                var requestedTopicIds =
+                    topicAssignments
+                        .Select(topic => topic.TopicId)
+                        .ToHashSet();
+
+                /*
+                 * Relaciones que existían en BD pero que el
+                 * usuario eliminó durante la edición.
                  */
-                attendee.Topics.Clear();
+                var topicAssignmentsToDelete =
+                    attendee.Topics
+                        .Where(
+                            existing =>
+                                !requestedTopicIds.Contains(
+                                    existing.TopicId
+                                )
+                        )
+                        .ToList();
 
                 foreach (
-                    var topicId in requested
-                        .TopicIds
-                        .Distinct()
+                    var topicAssignmentToDelete
+                        in topicAssignmentsToDelete
                 )
                 {
+                    attendee.Topics.Remove(
+                        topicAssignmentToDelete
+                    );
+                }
+
+                /*
+                 * Después de quitar las relaciones que ya no
+                 * fueron solicitadas, indexamos las restantes.
+                 */
+                var existingTopicsById =
+                    attendee.Topics
+                        .ToDictionary(
+                            assignment => assignment.TopicId
+                        );
+
+                foreach (var requestedTopic in topicAssignments)
+                {
+                    /*
+                     * Tema que ya pertenecía al asistente:
+                     * solamente actualizamos sus datos.
+                     */
+                    if (
+                        existingTopicsById.TryGetValue(
+                            requestedTopic.TopicId,
+                            out var existingTopic
+                        )
+                    )
+                    {
+                        UpdateTopicAssignmentData(
+                            existingTopic,
+                            requestedTopic
+                        );
+
+                        continue;
+                    }
+
+                    /*
+                     * Tema nuevo para este asistente.
+                     */
+                    var newTopicAssignment =
+                        new TrainingReportAttendeeTopic
+                        {
+                            TopicId = requestedTopic.TopicId,
+
+                            Topic =
+                                topicsById[
+                                    requestedTopic.TopicId
+                                ],
+
+                            Attendee = attendee
+                        };
+
+                    UpdateTopicAssignmentData(
+                        newTopicAssignment,
+                        requestedTopic
+                    );
+
                     attendee.Topics.Add(
-                        topicsById[topicId]
+                        newTopicAssignment
                     );
                 }
             }
@@ -669,7 +1254,8 @@ namespace Application.Features.TrainingReports.Commands
 
         private static void UpdateAttendeeData(
             TrainingReportAttendee attendee,
-            UpdateTrainingReportAttendeeDto requested
+            UpdateTrainingReportAttendeeDto requested,
+            IReadOnlyCollection<UpdateTrainingReportAttendeeTopicDto> topicAssignments
         )
         {
             attendee.EmployeeId =
@@ -678,26 +1264,47 @@ namespace Application.Features.TrainingReports.Commands
             attendee.LineId =
                 requested.LineId;
 
+            /*
+ * Campos legacy.
+ *
+ * Conservamos la unión de los días de todos
+ * los temas mientras estas columnas sigan
+ * existiendo en TrainingReportAttendees.
+ */
             attendee.DayMonday =
-                requested.DayMonday;
+                topicAssignments.Any(
+                    topic => topic.DayMonday
+                );
 
             attendee.DayTuesday =
-                requested.DayTuesday;
+                topicAssignments.Any(
+                    topic => topic.DayTuesday
+                );
 
             attendee.DayWednesday =
-                requested.DayWednesday;
+                topicAssignments.Any(
+                    topic => topic.DayWednesday
+                );
 
             attendee.DayThursday =
-                requested.DayThursday;
+                topicAssignments.Any(
+                    topic => topic.DayThursday
+                );
 
             attendee.DayFriday =
-                requested.DayFriday;
+                topicAssignments.Any(
+                    topic => topic.DayFriday
+                );
 
             attendee.DaySaturday =
-                requested.DaySaturday;
+                topicAssignments.Any(
+                    topic => topic.DaySaturday
+                );
 
             attendee.DaySunday =
-                requested.DaySunday;
+                topicAssignments.Any(
+                    topic => topic.DaySunday
+                );
 
             attendee.CustomerClient =
                 Normalize(requested.CustomerClient);

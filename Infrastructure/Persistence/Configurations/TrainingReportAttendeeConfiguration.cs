@@ -43,13 +43,7 @@ namespace Infrastructure.Persistence.Configurations
                    .HasForeignKey(a => a.LineId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(a => a.Topics)
-                   .WithMany(t => t.Attendees)
-                   .UsingEntity<Dictionary<string, object>>(
-                       "AttendeeTrainingTopics",
-                       j => j.HasOne<TrainingTopic>().WithMany().HasForeignKey("topicId").OnDelete(DeleteBehavior.NoAction),
-                       j => j.HasOne<TrainingReportAttendee>().WithMany().HasForeignKey("attendeeId").OnDelete(DeleteBehavior.Cascade)
-                   );
+            
         }
     }
 }

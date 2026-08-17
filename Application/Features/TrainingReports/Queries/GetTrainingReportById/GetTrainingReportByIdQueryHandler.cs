@@ -101,18 +101,67 @@ namespace Application.Features.TrainingReports.Queries.GetTrainingReportById
                                 attendee.SupervisorSignatureUrl,
 
                             Topics = attendee.Topics
-                                .Select(topic =>
-                                    new TrainingReportTopicDetailsDto
-                                    {
-                                        Id = topic.Id,
-                                        TrainingType =
-                                            topic.TrainingType,
-                                        TopicCode =
-                                            topic.TopicCode,
-                                        TopicName =
-                                            topic.TopicName
-                                    })
-                                .ToList()
+
+	                            .Select(assignment =>
+		                            new TrainingReportTopicDetailsDto
+		                            {
+			                            Id = assignment.TopicId,
+
+			                            TrainingType =
+				                            assignment.Topic.TrainingType,
+
+			                            TopicCode =
+				                            assignment.Topic.TopicCode,
+
+			                            TopicName =
+				                            assignment.Topic.TopicName,
+
+			                            DayMonday =
+				                            assignment.DayMonday,
+
+			                            DayTuesday =
+				                            assignment.DayTuesday,
+
+			                            DayWednesday =
+				                            assignment.DayWednesday,
+
+			                            DayThursday =
+				                            assignment.DayThursday,
+
+			                            DayFriday =
+				                            assignment.DayFriday,
+
+			                            DaySaturday =
+				                            assignment.DaySaturday,
+
+			                            DaySunday =
+				                            assignment.DaySunday,
+
+                                        HoursMonday =
+                                            assignment.HoursMonday,
+
+                                        HoursTuesday =
+                                            assignment.HoursTuesday,
+
+                                        HoursWednesday =
+                                            assignment.HoursWednesday,
+
+                                        HoursThursday =
+                                            assignment.HoursThursday,
+
+                                        HoursFriday =
+                                            assignment.HoursFriday,
+
+                                        HoursSaturday =
+                                            assignment.HoursSaturday,
+
+                                        HoursSunday =
+                                            assignment.HoursSunday,
+
+                                        TotalHours =
+				                            assignment.TotalHours
+		                            })
+	                            .ToList()
                         })
                     .ToList()
             };
