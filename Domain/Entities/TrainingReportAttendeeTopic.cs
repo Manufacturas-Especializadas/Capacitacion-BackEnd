@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.DTOs.TrainingReports
+﻿namespace Domain.Entities
 {
-    public class TrainingReportTopicDetailsDto
+    public class TrainingReportAttendeeTopic
     {
-        public int Id { get; set; }
+        public int AttendeeId { get; set; }
 
-        public string TrainingType { get; set; } = string.Empty;
+        public int TopicId { get; set; }
 
-        public string TopicCode { get; set; } = string.Empty;
-
-        public string TopicName { get; set; } = string.Empty;
 
         public bool DayMonday { get; set; }
 
@@ -25,6 +18,7 @@ namespace Application.DTOs.TrainingReports
         public bool DayFriday { get; set; }
 
         public bool DaySaturday { get; set; }
+
         public bool DaySunday { get; set; }
 
         public decimal? HoursMonday { get; set; }
@@ -40,6 +34,11 @@ namespace Application.DTOs.TrainingReports
         public decimal? HoursSaturday { get; set; }
 
         public decimal? HoursSunday { get; set; }
+
         public decimal? TotalHours { get; set; }
+
+        public TrainingReportAttendee Attendee { get; set; } = null!;
+
+        public TrainingTopic Topic { get; set; } = null!;
     }
 }

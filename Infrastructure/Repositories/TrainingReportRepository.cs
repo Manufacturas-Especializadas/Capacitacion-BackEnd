@@ -32,6 +32,7 @@ namespace Infrastructure.Repositories
                     .ThenInclude(attendee => attendee.ProductionLine)
                 .Include(report => report.Attendees)
                     .ThenInclude(attendee => attendee.Topics)
+                    .ThenInclude(assignment => assignment.Topic)
                 .FirstOrDefaultAsync(
                     report => report.Id == id,
                     cancellationToken

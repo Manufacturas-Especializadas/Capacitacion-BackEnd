@@ -48,6 +48,6 @@
 
         public ProductionLine? ProductionLine { get; set; }
 
-        public List<TrainingTopic> Topics { get; set; } = new();
+        public List<TrainingReportAttendeeTopic> Topics { get; set; } = new();
     }
 }
