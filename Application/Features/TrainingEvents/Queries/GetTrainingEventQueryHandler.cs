@@ -23,6 +23,7 @@ namespace Application.Features.TrainingEvents.Queries
                 Id = entity.Id,
                 CourseName = entity.CourseName,
                 Instructor = entity.InstructorName,
+                InstructorSignatureUrl = entity.InstructorSignatureUrl,
                 Area = entity.Room?.RoomName ?? "Sin sala",
                 DateFrom = entity.DateFrom.ToString("dd-MM-yyyy"),
                 DateTo = entity.DateTo.ToString("dd-MM-yyyy"),

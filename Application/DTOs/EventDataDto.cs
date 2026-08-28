@@ -8,6 +8,8 @@
 
         public required string Instructor { get; set; }
 
+        public string? InstructorSignatureUrl { get; set; }
+
         public required string Area { get; set; }
 
         public required string DateFrom { get; set; }
