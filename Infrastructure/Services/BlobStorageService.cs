@@ -108,6 +108,63 @@ namespace Infrastructure.Services
             return blobClient.Uri.ToString();
         }
 
+        public async Task<byte[]?> DownloadFileTrainingReportAsync(
+    string fileUrl,
+    CancellationToken cancellationToken = default
+)
+        {
+            if (string.IsNullOrWhiteSpace(fileUrl))
+            {
+                return null;
+            }
+
+            var uri = new Uri(fileUrl);
+
+            var blobUriBuilder =
+                new BlobUriBuilder(uri);
+
+            if (!string.Equals(
+                blobUriBuilder.BlobContainerName,
+                _containerNameTrainingReports,
+                StringComparison.OrdinalIgnoreCase
+            ))
+            {
+                return null;
+            }
+
+            var blobServiceClient =
+                new BlobServiceClient(
+                    _connectionString
+                );
+
+            var blobContainerClient =
+                blobServiceClient.GetBlobContainerClient(
+                    _containerNameTrainingReports
+                );
+
+            var blobClient =
+                blobContainerClient.GetBlobClient(
+                    blobUriBuilder.BlobName
+                );
+
+            var exists =
+                await blobClient.ExistsAsync(
+                    cancellationToken
+                );
+
+            if (!exists.Value)
+            {
+                return null;
+            }
+
+            var download =
+                await blobClient.DownloadContentAsync(
+                    cancellationToken
+                );
+
+            return download.Value.Content.ToArray();
+        }
+
         public async Task DeleteFileTrainingReportAsync(string fileUrl)
         {
             if (string.IsNullOrWhiteSpace(fileUrl)) return;

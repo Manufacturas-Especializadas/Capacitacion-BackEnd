@@ -2,6 +2,7 @@
 using Application.Features.TrainingReports.Queries.GetTrainingReportById;
 using Application.Features.TrainingReports.Queries.GetAllTrainingReports;
 //using Application.Features.TrainingReports.Commands.UpdateTrainingReport;
+using Application.Features.TrainingReports.Queries.GetTrainingReportPdf;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
@@ -65,6 +66,43 @@ namespace API.Controllers
             }
 
             return Ok(report);
+        }
+
+        [HttpGet("pdf/{id:int}")]
+        public async Task<IActionResult> DownloadTrainingReportPdf(
+    int id,
+    CancellationToken cancellationToken = default
+)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new
+                {
+                    message =
+                        "El identificador del reporte no es válido."
+                });
+            }
+
+            var result =
+                await mediator.Send(
+                    new GetTrainingReportPdfQuery(id),
+                    cancellationToken
+                );
+
+            if (result is null)
+            {
+                return NotFound(new
+                {
+                    message =
+                        $"No se encontró el reporte con ID {id}."
+                });
+            }
+
+            return File(
+                result.Content,
+                "application/pdf",
+                result.FileName
+            );
         }
 
         [HttpGet("getAll")]
