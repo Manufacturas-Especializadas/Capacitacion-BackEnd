@@ -974,12 +974,7 @@ namespace Application.Features.TrainingReports.Commands
                     "pero ese día no está seleccionado.";
             }
 
-            if (daySelected && !hours.HasValue)
-            {
-                return
-                    $"Debes indicar las horas de {dayName} " +
-                    $"para el empleado con ID {employeeId}.";
-            }
+            
 
             if (
     hours.HasValue &&

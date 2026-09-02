@@ -15,5 +15,10 @@ namespace Domain.Interfaces
         Task DeleteFileTrainingReportAsync(string fileUrl);
 
         Task DeleteFileWeldersAsync(string fileUrl);
+
+        Task<byte[]?> DownloadFileTrainingReportAsync(
+    string fileUrl,
+    CancellationToken cancellationToken = default
+);
     }
 }

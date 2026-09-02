@@ -7,6 +7,8 @@ using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Application.Interfaces.Reports;
+using Infrastructure.Reports;
 
 namespace Infrastructure
 {
@@ -28,6 +30,8 @@ namespace Infrastructure
 
             services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<ITrainingReportPdfGenerator,TrainingReportPdfGenerator>();
 
             return services;
         }

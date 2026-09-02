@@ -6,11 +6,23 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Infrastructure.Reports;
+using PdfSharp.Fonts;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/*
+ * PDFsharp Core no debe depender de las fuentes
+ * instaladas en el servidor Linux.
+ *
+ * Noto Sans viaja embebida dentro de Infrastructure.dll.
+ */
+GlobalFontSettings.FontResolver =
+    new TrainingReportFontResolver();
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -100,7 +112,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/", () => Results.Redirect("/swagger"));
