@@ -84,6 +84,30 @@ namespace Application.Features.TrainingReports.Queries.GetTrainingReportById
                             DaySaturday = attendee.DaySaturday,
                             DaySunday = attendee.DaySunday,
 
+                            HoursMonday =
+    attendee.HoursMonday,
+
+                            HoursTuesday =
+    attendee.HoursTuesday,
+
+                            HoursWednesday =
+    attendee.HoursWednesday,
+
+                            HoursThursday =
+    attendee.HoursThursday,
+
+                            HoursFriday =
+    attendee.HoursFriday,
+
+                            HoursSaturday =
+    attendee.HoursSaturday,
+
+                            HoursSunday =
+    attendee.HoursSunday,
+
+                            TotalHours =
+    attendee.TotalHours,
+
                             CustomerClient = attendee.CustomerClient,
                             UnionClassification =
                                 attendee.UnionClassification,
@@ -101,67 +125,27 @@ namespace Application.Features.TrainingReports.Queries.GetTrainingReportById
                                 attendee.SupervisorSignatureUrl,
 
                             Topics = attendee.Topics
+    .Select(
+        assignment =>
+            new TrainingReportTopicDetailsDto
+            {
+                Id =
+                    assignment.TopicId,
 
-	                            .Select(assignment =>
-		                            new TrainingReportTopicDetailsDto
-		                            {
-			                            Id = assignment.TopicId,
+                TrainingType =
+                    assignment.Topic
+                        .TrainingType,
 
-			                            TrainingType =
-				                            assignment.Topic.TrainingType,
+                TopicCode =
+                    assignment.Topic
+                        .TopicCode,
 
-			                            TopicCode =
-				                            assignment.Topic.TopicCode,
-
-			                            TopicName =
-				                            assignment.Topic.TopicName,
-
-			                            DayMonday =
-				                            assignment.DayMonday,
-
-			                            DayTuesday =
-				                            assignment.DayTuesday,
-
-			                            DayWednesday =
-				                            assignment.DayWednesday,
-
-			                            DayThursday =
-				                            assignment.DayThursday,
-
-			                            DayFriday =
-				                            assignment.DayFriday,
-
-			                            DaySaturday =
-				                            assignment.DaySaturday,
-
-			                            DaySunday =
-				                            assignment.DaySunday,
-
-                                        HoursMonday =
-                                            assignment.HoursMonday,
-
-                                        HoursTuesday =
-                                            assignment.HoursTuesday,
-
-                                        HoursWednesday =
-                                            assignment.HoursWednesday,
-
-                                        HoursThursday =
-                                            assignment.HoursThursday,
-
-                                        HoursFriday =
-                                            assignment.HoursFriday,
-
-                                        HoursSaturday =
-                                            assignment.HoursSaturday,
-
-                                        HoursSunday =
-                                            assignment.HoursSunday,
-
-                                        TotalHours =
-				                            assignment.TotalHours
-		                            })
-	                            .ToList()
+                TopicName =
+                    assignment.Topic
+                        .TopicName
+            }
+    )
+    .ToList()
                         })
                     .ToList()
             };

@@ -32,6 +32,22 @@ namespace Application.DTOs.TrainingReports
 
         public bool DaySunday { get; set; }
 
+        public decimal? HoursMonday { get; set; }
+
+        public decimal? HoursTuesday { get; set; }
+
+        public decimal? HoursWednesday { get; set; }
+
+        public decimal? HoursThursday { get; set; }
+
+        public decimal? HoursFriday { get; set; }
+
+        public decimal? HoursSaturday { get; set; }
+
+        public decimal? HoursSunday { get; set; }
+
+        public decimal? TotalHours { get; set; }
+
         public string? CustomerClient { get; set; }
 
         public string? UnionClassification { get; set; }

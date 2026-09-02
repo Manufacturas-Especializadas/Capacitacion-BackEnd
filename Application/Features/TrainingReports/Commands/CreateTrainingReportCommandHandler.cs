@@ -19,6 +19,16 @@ namespace Application.Features.TrainingReports.Commands
     public class CreateTrainingReportAttendeeTopicDto
     {
         public int TopicId { get; set; }
+    }
+
+
+
+    public class CreateTrainingReportAttendeeDto
+    {
+        public int EmployeeId { get; set; }
+
+        public int LineId { get; set; }
+
 
         public bool DayMonday { get; set; }
 
@@ -47,34 +57,6 @@ namespace Application.Features.TrainingReports.Commands
         public decimal? HoursSaturday { get; set; }
 
         public decimal? HoursSunday { get; set; }
-
-        public decimal? TotalHours { get; set; }
-    }
-
-
-
-    public class CreateTrainingReportAttendeeDto
-    {
-        public int EmployeeId { get; set; }
-
-        public int LineId { get; set; }
-
-
-        public bool DayMonday { get; set; }
-
-        public bool DayTuesday { get; set; }
-
-        public bool DayWednesday { get; set; }
-
-        public bool DayThursday { get; set; }
-
-        public bool DayFriday { get; set; }
-
-        public bool DaySaturday { get; set; }
-
-        public bool DaySunday { get; set; }
-
-
 
         public string? CustomerClient { get; set; }
 
@@ -309,46 +291,53 @@ namespace Application.Features.TrainingReports.Commands
 
 
                             DayMonday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DayMonday
-                                ),
+    attendeeDto.DayMonday,
 
                             DayTuesday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DayTuesday
-                                ),
+    attendeeDto.DayTuesday,
 
                             DayWednesday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DayWednesday
-                                ),
+    attendeeDto.DayWednesday,
 
                             DayThursday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DayThursday
-                                ),
+    attendeeDto.DayThursday,
 
                             DayFriday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DayFriday
-                                ),
+    attendeeDto.DayFriday,
 
                             DaySaturday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DaySaturday
-                                ),
+    attendeeDto.DaySaturday,
 
                             DaySunday =
-                                topicAssignments.Any(
-                                    topic =>
-                                        topic.DaySunday
-                                ),
+    attendeeDto.DaySunday,
+
+
+                            HoursMonday =
+    attendeeDto.HoursMonday,
+
+                            HoursTuesday =
+    attendeeDto.HoursTuesday,
+
+                            HoursWednesday =
+    attendeeDto.HoursWednesday,
+
+                            HoursThursday =
+    attendeeDto.HoursThursday,
+
+                            HoursFriday =
+    attendeeDto.HoursFriday,
+
+                            HoursSaturday =
+    attendeeDto.HoursSaturday,
+
+                            HoursSunday =
+    attendeeDto.HoursSunday,
+
+
+                            TotalHours =
+    ResolveAttendeeTotalHours(
+        attendeeDto
+    ),
 
 
                             CustomerClient =
@@ -415,71 +404,9 @@ namespace Application.Features.TrainingReports.Commands
                         attendee.Topics.Add(
     new TrainingReportAttendeeTopic
     {
-        TopicId =
-            topic.Id,
-
-        DayMonday =
-            topicAssignment.DayMonday,
-
-        DayTuesday =
-            topicAssignment.DayTuesday,
-
-        DayWednesday =
-            topicAssignment.DayWednesday,
-
-        DayThursday =
-            topicAssignment.DayThursday,
-
-        DayFriday =
-            topicAssignment.DayFriday,
-
-        DaySaturday =
-            topicAssignment.DaySaturday,
-
-        DaySunday =
-            topicAssignment.DaySunday,
-
-
-        HoursMonday =
-            topicAssignment.HoursMonday,
-
-        HoursTuesday =
-            topicAssignment.HoursTuesday,
-
-        HoursWednesday =
-            topicAssignment.HoursWednesday,
-
-        HoursThursday =
-            topicAssignment.HoursThursday,
-
-        HoursFriday =
-            topicAssignment.HoursFriday,
-
-        HoursSaturday =
-            topicAssignment.HoursSaturday,
-
-        HoursSunday =
-            topicAssignment.HoursSunday,
-
-
-        /*
-         * Nuevo contrato:
-         * calculado automáticamente.
-         *
-         * Contrato anterior:
-         * conserva TotalHours enviado.
-         */
-        TotalHours =
-            ResolveTotalHours(
-                topicAssignment
-            ),
-
-
-        Topic =
-            topic,
-
-        Attendee =
-            attendee
+        TopicId = topic.Id,
+        Topic = topic,
+        Attendee = attendee
     }
 );
                     }
@@ -533,244 +460,6 @@ namespace Application.Features.TrainingReports.Commands
 
                 throw;
             }
-        }
-
-
-        private static bool HasDailyHours(
-    CreateTrainingReportAttendeeTopicDto topic
-)
-        {
-            return
-                topic.HoursMonday.HasValue ||
-                topic.HoursTuesday.HasValue ||
-                topic.HoursWednesday.HasValue ||
-                topic.HoursThursday.HasValue ||
-                topic.HoursFriday.HasValue ||
-                topic.HoursSaturday.HasValue ||
-                topic.HoursSunday.HasValue;
-        }
-
-
-        private static decimal CalculateDailyTotal(
-            CreateTrainingReportAttendeeTopicDto topic
-        )
-        {
-            return
-                (topic.HoursMonday ?? 0m) +
-                (topic.HoursTuesday ?? 0m) +
-                (topic.HoursWednesday ?? 0m) +
-                (topic.HoursThursday ?? 0m) +
-                (topic.HoursFriday ?? 0m) +
-                (topic.HoursSaturday ?? 0m) +
-                (topic.HoursSunday ?? 0m);
-        }
-
-
-        private static string? ValidateDayHours(
-            int topicId,
-            string dayName,
-            bool daySelected,
-            decimal? hours
-        )
-        {
-            /*
-             * Si no hay horas y tampoco está seleccionado,
-             * es completamente válido.
-             */
-            if (!daySelected && !hours.HasValue)
-            {
-                return null;
-            }
-
-
-            /*
-             * No permitimos horas en un día que
-             * no fue seleccionado.
-             */
-            if (!daySelected && hours.HasValue)
-            {
-                return
-                    $"El tema con ID {topicId} tiene horas para {dayName}, " +
-                    "pero ese día no está seleccionado.";
-            }
-
-
-            /*
-             * Este método solamente se utiliza para el
-             * contrato nuevo.
-             *
-             * Si el día está seleccionado, debe conocer
-             * sus horas.
-             */
-            if (daySelected && !hours.HasValue)
-            {
-                return
-                    $"Debes indicar las horas de {dayName} " +
-                    $"para el tema con ID {topicId}.";
-            }
-
-
-            if (
-                hours.HasValue &&
-                (
-                    hours.Value < 0m ||
-                    hours.Value > 8m
-                )
-            )
-            {
-                return
-                    $"Las horas de {dayName} para el tema con ID {topicId} " +
-                    "deben estar entre 0 y 8.";
-            }
-
-
-            return null;
-        }
-
-
-        private static string? ValidateTopicHours(
-            CreateTrainingReportAttendeeTopicDto topic
-        )
-        {
-            /*
-             * CONTRATO LEGACY / HISTÓRICO
-             *
-             * Si no llegó ninguna hora diaria,
-             * todavía aceptamos TotalHours.
-             */
-            if (!HasDailyHours(topic))
-            {
-                if (
-                    topic.TotalHours.HasValue &&
-                    (
-                        topic.TotalHours.Value < 0m ||
-                        topic.TotalHours.Value > 56m
-                    )
-                )
-                {
-                    return
-                        $"Las horas totales del tema con ID {topic.TopicId} " +
-                        "deben estar entre 0 y 56.";
-                }
-
-                return null;
-            }
-
-
-            /*
-             * CONTRATO NUEVO
-             *
-             * En cuanto llega al menos una HoursX,
-             * todos los días seleccionados deben
-             * especificar sus horas.
-             */
-            var error = ValidateDayHours(
-                topic.TopicId,
-                "lunes",
-                topic.DayMonday,
-                topic.HoursMonday
-            );
-
-            if (error is not null)
-            {
-                return error;
-            }
-
-
-            error = ValidateDayHours(
-                topic.TopicId,
-                "martes",
-                topic.DayTuesday,
-                topic.HoursTuesday
-            );
-
-            if (error is not null)
-            {
-                return error;
-            }
-
-
-            error = ValidateDayHours(
-                topic.TopicId,
-                "miércoles",
-                topic.DayWednesday,
-                topic.HoursWednesday
-            );
-
-            if (error is not null)
-            {
-                return error;
-            }
-
-
-            error = ValidateDayHours(
-                topic.TopicId,
-                "jueves",
-                topic.DayThursday,
-                topic.HoursThursday
-            );
-
-            if (error is not null)
-            {
-                return error;
-            }
-
-
-            error = ValidateDayHours(
-                topic.TopicId,
-                "viernes",
-                topic.DayFriday,
-                topic.HoursFriday
-            );
-
-            if (error is not null)
-            {
-                return error;
-            }
-
-
-            error = ValidateDayHours(
-                topic.TopicId,
-                "sábado",
-                topic.DaySaturday,
-                topic.HoursSaturday
-            );
-
-            if (error is not null)
-            {
-                return error;
-            }
-
-
-            return ValidateDayHours(
-                topic.TopicId,
-                "domingo",
-                topic.DaySunday,
-                topic.HoursSunday
-            );
-        }
-
-
-        private static decimal? ResolveTotalHours(
-            CreateTrainingReportAttendeeTopicDto topic
-        )
-        {
-            /*
-             * Contrato anterior:
-             * confiamos temporalmente en TotalHours.
-             */
-            if (!HasDailyHours(topic))
-            {
-                return topic.TotalHours;
-            }
-
-
-            /*
-             * Contrato nuevo:
-             * TotalHours recibido deja de ser la fuente
-             * de verdad.
-             */
-            return CalculateDailyTotal(topic);
         }
 
         private static string? ValidateRequest(
@@ -856,6 +545,14 @@ namespace Application.Features.TrainingReports.Commands
                         "La petición contiene una línea no válida.";
                 }
 
+                var attendeeHoursError =
+    ValidateAttendeeHours(attendee);
+
+                if (attendeeHoursError is not null)
+                {
+                    return attendeeHoursError;
+                }
+
 
                 if (
                     attendee.Topics is { Count: > 0 } &&
@@ -899,18 +596,6 @@ namespace Application.Features.TrainingReports.Commands
                         "La petición contiene un tema no válido.";
                 }
 
-                foreach (var topicAssignment in topicAssignments)
-                {
-                    var hoursError =
-                        ValidateTopicHours(
-                            topicAssignment
-                        );
-
-                    if (hoursError is not null)
-                    {
-                        return hoursError;
-                    }
-                }
             }
 
 
@@ -945,44 +630,15 @@ namespace Application.Features.TrainingReports.Commands
 
 
             return attendee.TopicIds
-                .Distinct()
-                .Select(
-                    topicId =>
-                        new CreateTrainingReportAttendeeTopicDto
-                        {
-                            TopicId =
-                                topicId,
-
-                            DayMonday =
-                                attendee.DayMonday,
-
-                            DayTuesday =
-                                attendee.DayTuesday,
-
-                            DayWednesday =
-                                attendee.DayWednesday,
-
-                            DayThursday =
-                                attendee.DayThursday,
-
-                            DayFriday =
-                                attendee.DayFriday,
-
-                            DaySaturday =
-                                attendee.DaySaturday,
-
-                            DaySunday =
-                                attendee.DaySunday,
-
-                            /*
-                             * El frontend anterior nunca
-                             * capturó horas.
-                             */
-                            TotalHours =
-                                null
-                        }
-                )
-                .ToList();
+    .Distinct()
+    .Select(
+        topicId =>
+            new CreateTrainingReportAttendeeTopicDto
+            {
+                TopicId = topicId
+            }
+    )
+    .ToList();
         }
 
 
@@ -1129,5 +785,307 @@ namespace Application.Features.TrainingReports.Commands
                 message
             );
         }
+        //Metodos para actualizar
+        private static bool HasAttendeeDailyHours(
+    CreateTrainingReportAttendeeDto attendee
+)
+        {
+            return
+                attendee.HoursMonday.HasValue ||
+                attendee.HoursTuesday.HasValue ||
+                attendee.HoursWednesday.HasValue ||
+                attendee.HoursThursday.HasValue ||
+                attendee.HoursFriday.HasValue ||
+                attendee.HoursSaturday.HasValue ||
+                attendee.HoursSunday.HasValue;
+        }
+
+       private static decimal CalculateAttendeeDailyTotal(
+    CreateTrainingReportAttendeeDto attendee
+)
+{
+    var totalMinutes =
+        ConvertHourMinuteToMinutes(
+            attendee.HoursMonday
+        ) +
+        ConvertHourMinuteToMinutes(
+            attendee.HoursTuesday
+        ) +
+        ConvertHourMinuteToMinutes(
+            attendee.HoursWednesday
+        ) +
+        ConvertHourMinuteToMinutes(
+            attendee.HoursThursday
+        ) +
+        ConvertHourMinuteToMinutes(
+            attendee.HoursFriday
+        ) +
+        ConvertHourMinuteToMinutes(
+            attendee.HoursSaturday
+        ) +
+        ConvertHourMinuteToMinutes(
+            attendee.HoursSunday
+        );
+
+    return ConvertMinutesToHourMinute(
+        totalMinutes
+    );
+}
+
+        private static int ConvertHourMinuteToMinutes(
+    decimal? value
+)
+        {
+            if (!value.HasValue)
+            {
+                return 0;
+            }
+
+            var hours =
+                decimal.ToInt32(
+                    decimal.Truncate(value.Value)
+                );
+
+            var minutes =
+                decimal.ToInt32(
+                    (
+                        value.Value -
+                        decimal.Truncate(value.Value)
+                    ) * 100m
+                );
+
+            return (hours * 60) + minutes;
+        }
+
+
+        private static decimal ConvertMinutesToHourMinute(
+            int totalMinutes
+        )
+        {
+            var hours =
+                totalMinutes / 60;
+
+            var minutes =
+                totalMinutes % 60;
+
+            return
+                hours +
+                (minutes / 100m);
+        }
+
+        private static bool IsValidHourMinute(
+    decimal value
+)
+        {
+            if (
+                value < 0m ||
+                value > 8m
+            )
+            {
+                return false;
+            }
+
+            var wholeHours =
+                decimal.Truncate(value);
+
+            var minutePart =
+                (
+                    value -
+                    wholeHours
+                ) * 100m;
+
+            /*
+             * No aceptamos fracciones menores
+             * a un minuto.
+             */
+            if (
+                minutePart !=
+                decimal.Truncate(minutePart)
+            )
+            {
+                return false;
+            }
+
+            var minutes =
+                decimal.ToInt32(minutePart);
+
+            if (
+                minutes < 0 ||
+                minutes > 59
+            )
+            {
+                return false;
+            }
+
+            /*
+             * 8 horas es el máximo.
+             * 8.00 sí.
+             * 8.01 no.
+             */
+            if (
+                wholeHours == 8m &&
+                minutes > 0
+            )
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
+        private static decimal? ResolveAttendeeTotalHours(
+    CreateTrainingReportAttendeeDto attendee
+)
+        {
+            /*
+             * Compatibilidad temporal:
+             * el frontend anterior todavía no manda
+             * HoursMonday...HoursSunday a nivel asistente.
+             */
+            if (!HasAttendeeDailyHours(attendee))
+            {
+                return null;
+            }
+
+            /*
+             * Nuevo contrato:
+             * el total siempre se calcula en backend.
+             */
+            return CalculateAttendeeDailyTotal(attendee);
+        }
+
+        private static string? ValidateAttendeeDayHours(
+    int employeeId,
+    string dayName,
+    bool daySelected,
+    decimal? hours
+)
+        {
+            if (!daySelected && !hours.HasValue)
+            {
+                return null;
+            }
+
+            if (!daySelected && hours.HasValue)
+            {
+                return
+                    $"El empleado con ID {employeeId} tiene horas para {dayName}, " +
+                    "pero ese día no está seleccionado.";
+            }
+
+            if (daySelected && !hours.HasValue)
+            {
+                return
+                    $"Debes indicar las horas de {dayName} " +
+                    $"para el empleado con ID {employeeId}.";
+            }
+
+            if (
+    hours.HasValue &&
+    !IsValidHourMinute(
+        hours.Value
+    )
+)
+            {
+                return
+                    $"Las horas de {dayName} para el empleado con ID {employeeId} " +
+                    "deben usar el formato horas.minutos, por ejemplo 2.30, " +
+                    "con un máximo de 8.00 horas.";
+            }
+
+            return null;
+        }
+
+        private static string? ValidateAttendeeHours(
+    CreateTrainingReportAttendeeDto attendee
+)
+        {
+            /*
+             * Compatibilidad temporal con el frontend actual.
+             * Si todavía no manda horas a nivel asistente,
+             * no aplicamos el nuevo contrato.
+             */
+
+            var error = ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "lunes",
+                attendee.DayMonday,
+                attendee.HoursMonday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+            error = ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "martes",
+                attendee.DayTuesday,
+                attendee.HoursTuesday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+            error = ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "miércoles",
+                attendee.DayWednesday,
+                attendee.HoursWednesday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+            error = ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "jueves",
+                attendee.DayThursday,
+                attendee.HoursThursday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+            error = ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "viernes",
+                attendee.DayFriday,
+                attendee.HoursFriday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+            error = ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "sábado",
+                attendee.DaySaturday,
+                attendee.HoursSaturday
+            );
+
+            if (error is not null)
+            {
+                return error;
+            }
+
+            return ValidateAttendeeDayHours(
+                attendee.EmployeeId,
+                "domingo",
+                attendee.DaySunday,
+                attendee.HoursSunday
+            );
+        }
+
     }
 }

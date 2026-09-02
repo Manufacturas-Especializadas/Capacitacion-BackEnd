@@ -22,6 +22,38 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(a => a.DaySaturday).HasColumnName("daySaturday").HasDefaultValue(false);
             builder.Property(a => a.DaySunday).HasColumnName("daySunday").HasDefaultValue(false);
 
+            builder.Property(a => a.HoursMonday)
+    .HasColumnName("hoursMonday")
+    .HasPrecision(4, 2);
+
+            builder.Property(a => a.HoursTuesday)
+                .HasColumnName("hoursTuesday")
+                .HasPrecision(4, 2);
+
+            builder.Property(a => a.HoursWednesday)
+                .HasColumnName("hoursWednesday")
+                .HasPrecision(4, 2);
+
+            builder.Property(a => a.HoursThursday)
+                .HasColumnName("hoursThursday")
+                .HasPrecision(4, 2);
+
+            builder.Property(a => a.HoursFriday)
+                .HasColumnName("hoursFriday")
+                .HasPrecision(4, 2);
+
+            builder.Property(a => a.HoursSaturday)
+                .HasColumnName("hoursSaturday")
+                .HasPrecision(4, 2);
+
+            builder.Property(a => a.HoursSunday)
+                .HasColumnName("hoursSunday")
+                .HasPrecision(4, 2);
+
+            builder.Property(a => a.TotalHours)
+                .HasColumnName("totalHours")
+                .HasPrecision(4, 2);
+
             builder.Property(a => a.CustomerClient).HasColumnName("customerClient").HasMaxLength(100);
             builder.Property(a => a.UnionClassification).HasColumnName("unionClassification").HasMaxLength(100);
             builder.Property(a => a.WeldingPercentage).HasColumnName("weldingPercentage").HasMaxLength(20);
