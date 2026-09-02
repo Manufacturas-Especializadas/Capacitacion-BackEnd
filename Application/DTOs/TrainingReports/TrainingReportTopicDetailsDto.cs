@@ -1,45 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Application.DTOs.TrainingReports
 {
     public class TrainingReportTopicDetailsDto
     {
         public int Id { get; set; }
 
-        public string TrainingType { get; set; } = string.Empty;
+        public string TrainingType { get; set; }
+            = string.Empty;
 
-        public string TopicCode { get; set; } = string.Empty;
+        public string TopicCode { get; set; }
+            = string.Empty;
 
-        public string TopicName { get; set; } = string.Empty;
-
-        public bool DayMonday { get; set; }
-
-        public bool DayTuesday { get; set; }
-
-        public bool DayWednesday { get; set; }
-
-        public bool DayThursday { get; set; }
-
-        public bool DayFriday { get; set; }
-
-        public bool DaySaturday { get; set; }
-        public bool DaySunday { get; set; }
-
-        public decimal? HoursMonday { get; set; }
-
-        public decimal? HoursTuesday { get; set; }
-
-        public decimal? HoursWednesday { get; set; }
-
-        public decimal? HoursThursday { get; set; }
-
-        public decimal? HoursFriday { get; set; }
-
-        public decimal? HoursSaturday { get; set; }
-
-        public decimal? HoursSunday { get; set; }
-        public decimal? TotalHours { get; set; }
+        public string TopicName { get; set; }
+            = string.Empty;
     }
 }
