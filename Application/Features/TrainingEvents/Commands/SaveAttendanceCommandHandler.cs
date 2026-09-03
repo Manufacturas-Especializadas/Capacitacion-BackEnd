@@ -26,7 +26,7 @@ namespace Application.Features.TrainingEvents.Commands
                 trainingEvent.InstructorSignatureUrl = await _blobStorage.UploadFileAsync(request.Data.InstructorSignature, instructorFileName);
             }
 
-            var orderedTopics = trainingEvent.Topics?.OrderBy(t => t.Id).ToList() ?? new();
+            var orderedTopics = trainingEvent.Topics?.OrderBy(t => t.TopicOrder).ToList() ?? new();
 
             foreach (var record in request.Data.EmployeeRecords)
             {

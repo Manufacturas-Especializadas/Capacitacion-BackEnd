@@ -10,6 +10,8 @@
 
         public string? InstructorSignatureUrl { get; set; }
 
+        public int RoomId { get; set; }
+
         public required string Area { get; set; }
 
         public required string DateFrom { get; set; }

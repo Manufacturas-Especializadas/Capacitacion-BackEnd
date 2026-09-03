@@ -29,7 +29,8 @@ namespace Infrastructure.Repositories
         IGenericRepository<OptionsCatalog> optionsCatalogs,
         IGenericRepository<FollowUpWeek> followUpWeek,
         IGenericRepository<User> users,
-        IGenericRepository<Role> roles) : IUnitOfWork
+        IGenericRepository<Role> roles,
+        IGenericRepository<EventTopic> eventTopics) : IUnitOfWork
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -78,9 +79,8 @@ namespace Infrastructure.Repositories
             return await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+        public void Dispose() { _context.Dispose(); }
+
+        public IGenericRepository<EventTopic> EventTopics{ get; } = eventTopics;
     }
 }
