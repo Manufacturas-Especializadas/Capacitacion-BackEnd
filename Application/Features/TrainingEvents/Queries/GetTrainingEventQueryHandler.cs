@@ -24,11 +24,13 @@ namespace Application.Features.TrainingEvents.Queries
                 CourseName = entity.CourseName,
                 Instructor = entity.InstructorName,
                 InstructorSignatureUrl = entity.InstructorSignatureUrl,
+                RoomId = entity.RoomId,
                 Area = entity.Room?.RoomName ?? "Sin sala",
                 DateFrom = entity.DateFrom.ToString("dd-MM-yyyy"),
                 DateTo = entity.DateTo.ToString("dd-MM-yyyy"),
                 EvaluationTopics = orderedTopics.Select(t => new TopicDetailDto
                 {
+                    Id = t.Id,
                     Name = t.TopicName,
                     Date = t.TopicDate.HasValue ? t.TopicDate.Value.ToString("dd-MM-yyyy") : string.Empty,
                     StartTime = t.StartTime.HasValue ? t.StartTime.Value.ToString(@"hh\:mm") : string.Empty,
