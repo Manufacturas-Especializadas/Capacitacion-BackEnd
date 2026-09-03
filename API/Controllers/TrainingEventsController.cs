@@ -89,5 +89,60 @@ namespace API.Controllers
 
             return Ok(result);
         }
+        [HttpPut("update-attendees/{id:int}")]
+        public async Task<IActionResult> UpdateAttendees(
+    int id,
+    [FromBody] AssignAttendeesDto request
+)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new
+                {
+                    message =
+                        "El identificador del evento no es válido."
+                });
+            }
+
+            if (id != request.EventId)
+            {
+                return BadRequest(new
+                {
+                    message =
+                        "El ID del evento no coincide con la ruta."
+                });
+            }
+
+            var command =
+                new UpdateAttendeesCommand(
+                    id,
+                    request
+                );
+
+            var result =
+                await _mediator.Send(command);
+
+            return result.Status switch
+            {
+                UpdateAttendeesStatus.Updated =>
+                    Ok(new
+                    {
+                        message = result.Message
+                    }),
+
+                UpdateAttendeesStatus.NotFound =>
+                    NotFound(new
+                    {
+                        message = result.Message
+                    }),
+
+                _ =>
+                    BadRequest(new
+                    {
+                        message = result.Message
+                    })
+            };
+        }
+
     }
 }
