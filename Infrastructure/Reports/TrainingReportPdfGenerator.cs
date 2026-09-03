@@ -110,14 +110,29 @@ namespace Infrastructure.Reports
                 );
             }
 
-            foreach (var attendee in report.Attendees)
+            AddSectionTitle(
+    section,
+    "Participantes"
+);
+
+            for (
+                var index = 0;
+                index < report.Attendees.Count;
+                index++
+            )
             {
                 AddAttendee(
                     section,
-                    attendee,
-                    signatureAssets
+                    report.Attendees[index],
+                    index + 1
                 );
             }
+
+            AddAttendeeSignaturesTable(
+                section,
+                report,
+                signatureAssets
+            );
 
             AddObservations(
                 section,
@@ -143,13 +158,13 @@ namespace Infrastructure.Reports
                 TrainingReportFontResolver.FamilyName;
 
             normal.Font.Size =
-                Unit.FromPoint(9);
+                Unit.FromPoint(8.5);
 
             normal.Font.Color =
                 TextColor;
 
             normal.ParagraphFormat.SpaceAfter =
-                Unit.FromPoint(4);
+                Unit.FromPoint(2);
         }
 
         private static void ConfigurePage(
@@ -222,7 +237,7 @@ namespace Infrastructure.Reports
                 table.AddRow();
 
             row.BottomPadding =
-                Unit.FromPoint(8);
+                Unit.FromPoint(4);
 
             var titleCell =
                 row.Cells[0];
@@ -231,7 +246,7 @@ namespace Infrastructure.Reports
                 titleCell.AddParagraph();
 
             title.Format.Font.Size =
-                Unit.FromPoint(20);
+                Unit.FromPoint(16);
 
             title.Format.Font.Bold = true;
 
@@ -311,9 +326,9 @@ namespace Infrastructure.Reports
         }
 
         private static void AddGeneralInformation(
-            Section section,
-            TrainingReportDetailsDto report
-        )
+    Section section,
+    TrainingReportDetailsDto report
+)
         {
             AddSectionTitle(
                 section,
@@ -321,7 +336,9 @@ namespace Infrastructure.Reports
             );
 
             var table =
-                CreateInformationTable(section);
+                CreateInformationTable(
+                    section
+                );
 
             var firstRow =
                 table.AddRow();
@@ -343,7 +360,7 @@ namespace Infrastructure.Reports
 
             AddKeyValueCell(
                 secondRow.Cells[0],
-                "Nómina del líder",
+                "Nómina",
                 report.LeaderPayroll
             );
 
@@ -354,25 +371,31 @@ namespace Infrastructure.Reports
                     ?? "No especificada"
             );
 
-            var thirdRow =
-                table.AddRow();
+            var metadata =
+                section.AddParagraph();
 
-            AddKeyValueCell(
-                thirdRow.Cells[0],
-                "Fecha de creación",
-                report.CreatedAt.ToString(
+            metadata.Format.Font.Size =
+                Unit.FromPoint(7);
+
+            metadata.Format.Font.Color =
+                MutedColor;
+
+            metadata.Format.SpaceBefore =
+                Unit.FromPoint(2);
+
+            metadata.Format.SpaceAfter =
+                Unit.FromPoint(3);
+
+            metadata.AddText(
+                $"Creado: {report.CreatedAt.ToString(
                     "dd/MM/yyyy HH:mm",
                     CultureInfo.InvariantCulture
-                )
+                )}"
             );
 
-            AddKeyValueCell(
-                thirdRow.Cells[1],
-                "Asistentes registrados",
-                report.Attendees.Count.ToString()
+            metadata.AddText(
+                $"   ·   Participantes: {report.Attendees.Count}"
             );
-
-            AddSectionSpacing(section);
         }
 
         private static void AddWeldingUnionTypes(
@@ -441,427 +464,11 @@ namespace Infrastructure.Reports
         }
 
         private static void AddAttendee(
-            Section section,
-            TrainingReportAttendeeDetailsDto attendee,
-            SignatureAssets signatureAssets
-        )
+    Section section,
+    TrainingReportAttendeeDetailsDto attendee,
+    int number
+)
         {
-            AddSectionTitle(
-                section,
-                $"Asistente · {attendee.EmployeeName}"
-            );
-
-            var attendeeHeader =
-                section.AddParagraph();
-
-            attendeeHeader.Format.SpaceAfter =
-                Unit.FromPoint(6);
-
-            var payrollText =
-                attendeeHeader.AddFormattedText(
-                    $"Nómina: {attendee.EmployeeNumber}",
-                    TextFormat.Bold
-                );
-
-            payrollText.Color =
-                PrimaryColor;
-
-            var information =
-                BuildAttendeeInformation(
-                    attendee
-                );
-
-            AddDynamicInformationTable(
-                section,
-                information
-            );
-
-            AddTopics(
-                section,
-                attendee
-            );
-
-            AddSchedule(
-                section,
-                attendee
-            );
-
-            signatureAssets.Attendees.TryGetValue(
-                attendee.Id,
-                out var attendeeSignatures
-            );
-
-            AddAttendeeSignatures(
-                section,
-                attendeeSignatures
-            );
-
-            var separator =
-                section.AddParagraph();
-
-            separator.Format.SpaceBefore =
-                Unit.FromPoint(8);
-
-            separator.Format.SpaceAfter =
-                Unit.FromPoint(12);
-
-            separator.Format.Borders.Bottom.Width =
-                Unit.FromPoint(0.8);
-
-            separator.Format.Borders.Bottom.Color =
-                BorderColor;
-        }
-
-        private static List<(string Label, string Value)>
-            BuildAttendeeInformation(
-                TrainingReportAttendeeDetailsDto attendee
-            )
-        {
-            var items =
-                new List<(string, string)>
-                {
-                    (
-                        "Línea",
-                        attendee.LineName
-                    )
-                };
-
-            AddOptionalItem(
-                items,
-                "Turno",
-                attendee.Shift
-            );
-
-            AddOptionalItem(
-                items,
-                "Maquinaria",
-                attendee.Machinery
-            );
-
-            AddOptionalItem(
-                items,
-                "AST",
-                attendee.Ast
-            );
-
-            AddOptionalItem(
-                items,
-                "Cliente",
-                attendee.CustomerClient
-            );
-
-            AddOptionalItem(
-                items,
-                "Clasificación de unión",
-                attendee.UnionClassification
-            );
-
-            AddOptionalItem(
-                items,
-                "Porcentaje de soldadura",
-                attendee.WeldingPercentage
-            );
-
-            AddOptionalItem(
-                items,
-                "Diámetro",
-                attendee.Diameter
-            );
-
-            return items;
-        }
-
-        private static void AddTopics(
-            Section section,
-            TrainingReportAttendeeDetailsDto attendee
-        )
-        {
-            AddSubsectionTitle(
-                section,
-                "Temas"
-            );
-
-            if (attendee.Topics.Count == 0)
-            {
-                var empty =
-                    section.AddParagraph(
-                        "Sin temas registrados."
-                    );
-
-                empty.Format.Font.Color =
-                    MutedColor;
-
-                return;
-            }
-
-            var table =
-                section.AddTable();
-
-            table.Borders.Color =
-                BorderColor;
-
-            table.Borders.Width =
-                Unit.FromPoint(0.5);
-
-            table.AddColumn(
-                Unit.FromCentimeter(4)
-            );
-
-            table.AddColumn(
-                Unit.FromCentimeter(13.9)
-            );
-
-            var header =
-                table.AddRow();
-
-            header.Shading.Color =
-                LightBackgroundColor;
-
-            AddTableHeader(
-                header.Cells[0],
-                "Código"
-            );
-
-            AddTableHeader(
-                header.Cells[1],
-                "Tema"
-            );
-
-            foreach (
-                var topic
-                in attendee.Topics
-            )
-            {
-                var row =
-                    table.AddRow();
-
-                AddTableValue(
-                    row.Cells[0],
-                    topic.TopicCode
-                );
-
-                AddTableValue(
-                    row.Cells[1],
-                    topic.TopicName
-                );
-            }
-
-            AddSmallSpacing(section);
-        }
-
-        private static void AddSchedule(
-            Section section,
-            TrainingReportAttendeeDetailsDto attendee
-        )
-        {
-            AddSubsectionTitle(
-                section,
-                "Días y horas de capacitación"
-            );
-
-            var table =
-                section.AddTable();
-
-            table.Borders.Color =
-                BorderColor;
-
-            table.Borders.Width =
-                Unit.FromPoint(0.5);
-
-            table.AddColumn(
-                Unit.FromCentimeter(9)
-            );
-
-            table.AddColumn(
-                Unit.FromCentimeter(8.9)
-            );
-
-            var header =
-                table.AddRow();
-
-            header.Shading.Color =
-                LightBackgroundColor;
-
-            AddTableHeader(
-                header.Cells[0],
-                "Día"
-            );
-
-            AddTableHeader(
-                header.Cells[1],
-                "Horas"
-            );
-
-            AddDayRow(
-                table,
-                "Lunes",
-                attendee.DayMonday,
-                attendee.HoursMonday
-            );
-
-            AddDayRow(
-                table,
-                "Martes",
-                attendee.DayTuesday,
-                attendee.HoursTuesday
-            );
-
-            AddDayRow(
-                table,
-                "Miércoles",
-                attendee.DayWednesday,
-                attendee.HoursWednesday
-            );
-
-            AddDayRow(
-                table,
-                "Jueves",
-                attendee.DayThursday,
-                attendee.HoursThursday
-            );
-
-            AddDayRow(
-                table,
-                "Viernes",
-                attendee.DayFriday,
-                attendee.HoursFriday
-            );
-
-            AddDayRow(
-                table,
-                "Sábado",
-                attendee.DaySaturday,
-                attendee.HoursSaturday
-            );
-
-            AddDayRow(
-                table,
-                "Domingo",
-                attendee.DaySunday,
-                attendee.HoursSunday
-            );
-
-            var totalRow =
-                table.AddRow();
-
-            totalRow.Shading.Color =
-                PrimarySoftColor;
-
-            AddTableHeader(
-                totalRow.Cells[0],
-                "TOTAL"
-            );
-
-            var totalParagraph =
-                totalRow.Cells[1]
-                    .AddParagraph();
-
-            totalParagraph.Format.Alignment =
-                ParagraphAlignment.Center;
-
-            totalParagraph.Format.Font.Bold =
-                true;
-
-            totalParagraph.Format.Font.Color =
-                PrimaryColor;
-
-            totalParagraph.AddText(
-                FormatHours(
-                    attendee.TotalHours
-                )
-            );
-
-            AddSmallSpacing(section);
-        }
-
-        private static void AddDayRow(
-            Table table,
-            string dayName,
-            bool selected,
-            decimal? hours
-        )
-        {
-            if (!selected)
-            {
-                return;
-            }
-
-            var row =
-                table.AddRow();
-
-            AddTableValue(
-                row.Cells[0],
-                dayName
-            );
-
-            var hoursParagraph =
-                row.Cells[1]
-                    .AddParagraph();
-
-            hoursParagraph.Format.Alignment =
-                ParagraphAlignment.Center;
-
-            hoursParagraph.Format.Font.Bold =
-                true;
-
-            hoursParagraph.AddText(
-                FormatHours(hours)
-            );
-        }
-
-        private static void AddAttendeeSignatures(
-            Section section,
-            AttendeeSignatureAssets? assets
-        )
-        {
-            AddSubsectionTitle(
-                section,
-                "Firmas del asistente"
-            );
-
-            var table =
-                section.AddTable();
-
-            table.AddColumn(
-                Unit.FromCentimeter(8.8)
-            );
-
-            table.AddColumn(
-                Unit.FromCentimeter(8.8)
-            );
-
-            table.Borders.Color =
-                BorderColor;
-
-            table.Borders.Width =
-                Unit.FromPoint(0.5);
-
-            var row =
-                table.AddRow();
-
-            AddSignatureCell(
-                row.Cells[0],
-                "Firma del asistente",
-                assets?.Trainee
-            );
-
-            AddSignatureCell(
-                row.Cells[1],
-                "Firma del supervisor",
-                assets?.Supervisor
-            );
-        }
-
-        private static void AddObservations(
-            Section section,
-            string? observations
-        )
-        {
-            AddSectionTitle(
-                section,
-                "Observaciones"
-            );
-
             var table =
                 section.AddTable();
 
@@ -875,21 +482,536 @@ namespace Infrastructure.Reports
             table.Borders.Width =
                 Unit.FromPoint(0.5);
 
-            var row =
+            /*
+             * Encabezado compacto del participante.
+             */
+            var header =
                 table.AddRow();
 
-            row.Cells[0].Shading.Color =
-                LightBackgroundColor;
+            header.Shading.Color =
+                PrimarySoftColor;
 
-            var paragraph =
-                row.Cells[0]
+            header.TopPadding =
+                Unit.FromPoint(3);
+
+            header.BottomPadding =
+                Unit.FromPoint(3);
+
+            var headerParagraph =
+                header.Cells[0]
                     .AddParagraph();
 
+            headerParagraph.Format.Font.Size =
+                Unit.FromPoint(8.5);
+
+            var numberText =
+                headerParagraph
+                    .AddFormattedText(
+                        $"{number:00}  ",
+                        TextFormat.Bold
+                    );
+
+            numberText.Color =
+                PrimaryColor;
+
+            var name =
+                headerParagraph
+                    .AddFormattedText(
+                        attendee.EmployeeName,
+                        TextFormat.Bold
+                    );
+
+            name.Color =
+                TextColor;
+
+            var identityText =
+                $"  ·  Nómina {attendee.EmployeeNumber}" +
+                $"  ·  Línea {attendee.LineName}";
+
+            headerParagraph.AddText(
+                identityText
+            );
+
+            var total =
+                headerParagraph
+                    .AddFormattedText(
+                        $"  ·  Total {FormatHoursCompact(attendee.TotalHours)}",
+                        TextFormat.Bold
+                    );
+
+            total.Color =
+                PrimaryColor;
+
+            /*
+             * Información del participante.
+             */
+            var content =
+                table.AddRow();
+
+            content.TopPadding =
+                Unit.FromPoint(2);
+
+            content.BottomPadding =
+                Unit.FromPoint(3);
+
+            var cell =
+                content.Cells[0];
+
+            AddCompactLine(
+                cell,
+                "Temas",
+                BuildTopicsText(attendee)
+            );
+
+            AddCompactLine(
+                cell,
+                "Horario",
+                BuildScheduleText(attendee)
+            );
+
+            var extraInformation =
+                BuildAttendeeDetailsText(
+                    attendee
+                );
+
+            if (
+                !string.IsNullOrWhiteSpace(
+                    extraInformation
+                )
+            )
+            {
+                AddCompactLine(
+                    cell,
+                    "Datos",
+                    extraInformation
+                );
+            }
+
+            var spacing =
+                section.AddParagraph();
+
+            spacing.Format.SpaceAfter =
+                Unit.FromPoint(3);
+        }
+
+        private static void AddAttendeeSignaturesTable(
+    Section section,
+    TrainingReportDetailsDto report,
+    SignatureAssets signatureAssets
+)
+        {
+            if (report.Attendees.Count == 0)
+            {
+                return;
+            }
+
+            AddSectionTitle(
+                section,
+                "Firmas de participantes"
+            );
+
+            var table =
+                section.AddTable();
+
+            table.AddColumn(
+                Unit.FromCentimeter(7)
+            );
+
+            table.AddColumn(
+                Unit.FromCentimeter(5.45)
+            );
+
+            table.AddColumn(
+                Unit.FromCentimeter(5.45)
+            );
+
+            table.Borders.Color =
+                BorderColor;
+
+            table.Borders.Width =
+                Unit.FromPoint(0.5);
+
+            /*
+             * Encabezados.
+             */
+            var header =
+                table.AddRow();
+
+            header.Shading.Color =
+                LightBackgroundColor;
+
+            AddTableHeader(
+                header.Cells[0],
+                "Participante"
+            );
+
+            AddTableHeader(
+                header.Cells[1],
+                "Firma asistente"
+            );
+
+            AddTableHeader(
+                header.Cells[2],
+                "Firma supervisor"
+            );
+
+            /*
+             * Una sola fila compacta por participante.
+             */
+            foreach (
+                var attendee
+                in report.Attendees
+            )
+            {
+                signatureAssets
+                    .Attendees
+                    .TryGetValue(
+                        attendee.Id,
+                        out var assets
+                    );
+
+                var row =
+                    table.AddRow();
+
+                row.TopPadding =
+                    Unit.FromPoint(2);
+
+                row.BottomPadding =
+                    Unit.FromPoint(2);
+
+                var identity =
+                    row.Cells[0]
+                        .AddParagraph();
+
+                identity.Format.Font.Size =
+                    Unit.FromPoint(7.5);
+
+                identity.AddFormattedText(
+                    attendee.EmployeeName,
+                    TextFormat.Bold
+                );
+
+                identity.AddText(
+                    $" · {attendee.EmployeeNumber}"
+                );
+
+                AddCompactSignatureImage(
+                    row.Cells[1],
+                    assets?.Trainee
+                );
+
+                AddCompactSignatureImage(
+                    row.Cells[2],
+                    assets?.Supervisor
+                );
+            }
+
+            AddSectionSpacing(
+                section
+            );
+        }
+
+        private static void AddCompactSignatureImage(
+    Cell cell,
+    string? imageSource
+)
+        {
+            var paragraph =
+                cell.AddParagraph();
+
+            paragraph.Format.Alignment =
+                ParagraphAlignment.Center;
+
             paragraph.Format.SpaceBefore =
-                Unit.FromPoint(5);
+                Unit.FromPoint(1);
 
             paragraph.Format.SpaceAfter =
-                Unit.FromPoint(5);
+                Unit.FromPoint(1);
+
+            if (
+                !string.IsNullOrWhiteSpace(
+                    imageSource
+                )
+            )
+            {
+                var image =
+                    paragraph.AddImage(
+                        imageSource
+                    );
+
+                image.LockAspectRatio =
+                    true;
+
+                image.Height =
+                    Unit.FromCentimeter(0.85);
+
+                return;
+            }
+
+            var missing =
+                paragraph.AddFormattedText(
+                    "Pendiente"
+                );
+
+            missing.Font.Size =
+                Unit.FromPoint(7);
+
+            missing.Font.Color =
+                MutedColor;
+        }
+
+        private static void AddCompactLine(
+    Cell cell,
+    string label,
+    string value
+)
+        {
+            var paragraph =
+                cell.AddParagraph();
+
+            paragraph.Format.Font.Size =
+                Unit.FromPoint(7.8);
+
+            paragraph.Format.SpaceBefore =
+                Unit.FromPoint(1);
+
+            paragraph.Format.SpaceAfter =
+                Unit.FromPoint(1);
+
+            var labelText =
+                paragraph.AddFormattedText(
+                    $"{label}: ",
+                    TextFormat.Bold
+                );
+
+            labelText.Color =
+                MutedColor;
+
+            paragraph.AddText(
+                string.IsNullOrWhiteSpace(value)
+                    ? "—"
+                    : value
+            );
+        }
+
+        private static string BuildTopicsText(
+            TrainingReportAttendeeDetailsDto attendee
+        )
+        {
+            if (attendee.Topics.Count == 0)
+            {
+                return "Sin temas registrados";
+            }
+
+            return string.Join(
+                "  ·  ",
+                attendee.Topics.Select(topic =>
+                {
+                    var code =
+                        topic.TopicCode?.Trim();
+
+                    var name =
+                        topic.TopicName?.Trim();
+
+                    if (
+                        string.IsNullOrWhiteSpace(
+                            code
+                        )
+                    )
+                    {
+                        return name ?? "—";
+                    }
+
+                    if (
+                        string.IsNullOrWhiteSpace(
+                            name
+                        )
+                    )
+                    {
+                        return code;
+                    }
+
+                    return $"{code} {name}";
+                })
+            );
+        }
+
+        private static string BuildScheduleText(
+            TrainingReportAttendeeDetailsDto attendee
+        )
+        {
+            var days =
+                new List<string>();
+
+            AddCompactDay(
+                days,
+                "Lun",
+                attendee.DayMonday,
+                attendee.HoursMonday
+            );
+
+            AddCompactDay(
+                days,
+                "Mar",
+                attendee.DayTuesday,
+                attendee.HoursTuesday
+            );
+
+            AddCompactDay(
+                days,
+                "Mié",
+                attendee.DayWednesday,
+                attendee.HoursWednesday
+            );
+
+            AddCompactDay(
+                days,
+                "Jue",
+                attendee.DayThursday,
+                attendee.HoursThursday
+            );
+
+            AddCompactDay(
+                days,
+                "Vie",
+                attendee.DayFriday,
+                attendee.HoursFriday
+            );
+
+            AddCompactDay(
+                days,
+                "Sáb",
+                attendee.DaySaturday,
+                attendee.HoursSaturday
+            );
+
+            AddCompactDay(
+                days,
+                "Dom",
+                attendee.DaySunday,
+                attendee.HoursSunday
+            );
+
+            if (days.Count == 0)
+            {
+                return "Sin días seleccionados";
+            }
+
+            return string.Join(
+                "  ·  ",
+                days
+            );
+        }
+
+        private static void AddCompactDay(
+            ICollection<string> days,
+            string day,
+            bool selected,
+            decimal? hours
+        )
+        {
+            if (!selected)
+            {
+                return;
+            }
+
+            days.Add(
+                $"{day} {FormatHoursCompact(hours)}"
+            );
+        }
+
+        private static string BuildAttendeeDetailsText(
+            TrainingReportAttendeeDetailsDto attendee
+        )
+        {
+            var values =
+                new List<string>();
+
+            AddCompactDetail(
+                values,
+                "Turno",
+                attendee.Shift
+            );
+
+            AddCompactDetail(
+                values,
+                "Maquinaria",
+                attendee.Machinery
+            );
+
+            AddCompactDetail(
+                values,
+                "AST",
+                attendee.Ast
+            );
+
+            AddCompactDetail(
+                values,
+                "Cliente",
+                attendee.CustomerClient
+            );
+
+            AddCompactDetail(
+                values,
+                "Unión",
+                attendee.UnionClassification
+            );
+
+            AddCompactDetail(
+                values,
+                "Soldadura",
+                attendee.WeldingPercentage
+            );
+
+            AddCompactDetail(
+                values,
+                "Diámetro",
+                attendee.Diameter
+            );
+
+            return string.Join(
+                "  ·  ",
+                values
+            );
+        }
+
+        private static void AddCompactDetail(
+            ICollection<string> values,
+            string label,
+            string? value
+        )
+        {
+            if (
+                string.IsNullOrWhiteSpace(value)
+            )
+            {
+                return;
+            }
+
+            values.Add(
+                $"{label}: {value.Trim()}"
+            );
+        }
+
+
+        private static void AddObservations(
+    Section section,
+    string? observations
+)
+        {
+            AddSectionTitle(
+                section,
+                "Observaciones"
+            );
+
+            var paragraph =
+                section.AddParagraph();
+
+            paragraph.Format.Font.Size =
+                Unit.FromPoint(8);
+
+            paragraph.Format.SpaceAfter =
+                Unit.FromPoint(4);
 
             paragraph.AddText(
                 string.IsNullOrWhiteSpace(
@@ -898,8 +1020,6 @@ namespace Infrastructure.Reports
                     ? "Sin observaciones registradas."
                     : observations.Trim()
             );
-
-            AddSectionSpacing(section);
         }
 
         private static void AddClosingSignatures(
@@ -979,47 +1099,7 @@ namespace Infrastructure.Reports
             return table;
         }
 
-        private static void AddDynamicInformationTable(
-            Section section,
-            List<(string Label, string Value)> items
-        )
-        {
-            var table =
-                CreateInformationTable(section);
 
-            for (
-                var index = 0;
-                index < items.Count;
-                index += 2
-            )
-            {
-                var row =
-                    table.AddRow();
-
-                var first =
-                    items[index];
-
-                AddKeyValueCell(
-                    row.Cells[0],
-                    first.Label,
-                    first.Value
-                );
-
-                if (index + 1 < items.Count)
-                {
-                    var second =
-                        items[index + 1];
-
-                    AddKeyValueCell(
-                        row.Cells[1],
-                        second.Label,
-                        second.Value
-                    );
-                }
-            }
-
-            AddSmallSpacing(section);
-        }
 
         private static void AddKeyValueCell(
             Cell cell,
@@ -1136,10 +1216,10 @@ namespace Infrastructure.Reports
                 ParagraphAlignment.Center;
 
             content.Format.SpaceBefore =
-                Unit.FromPoint(6);
+                Unit.FromPoint(3);
 
             content.Format.SpaceAfter =
-                Unit.FromPoint(6);
+                Unit.FromPoint(3);
 
             if (!string.IsNullOrWhiteSpace(
                 imageSource
@@ -1153,7 +1233,7 @@ namespace Infrastructure.Reports
                 image.LockAspectRatio = true;
 
                 image.Height =
-                    Unit.FromCentimeter(1.6);
+    Unit.FromCentimeter(1.15);
             }
             else
             {
@@ -1179,13 +1259,13 @@ namespace Infrastructure.Reports
                 section.AddParagraph();
 
             paragraph.Format.SpaceBefore =
-                Unit.FromPoint(10);
-
-            paragraph.Format.SpaceAfter =
                 Unit.FromPoint(6);
 
+            paragraph.Format.SpaceAfter =
+                Unit.FromPoint(3);
+
             paragraph.Format.Font.Size =
-                Unit.FromPoint(12);
+                Unit.FromPoint(10.5);
 
             paragraph.Format.Font.Bold =
                 true;
@@ -1196,31 +1276,7 @@ namespace Infrastructure.Reports
             paragraph.AddText(title);
         }
 
-        private static void AddSubsectionTitle(
-            Section section,
-            string title
-        )
-        {
-            var paragraph =
-                section.AddParagraph();
 
-            paragraph.Format.SpaceBefore =
-                Unit.FromPoint(7);
-
-            paragraph.Format.SpaceAfter =
-                Unit.FromPoint(4);
-
-            paragraph.Format.Font.Size =
-                Unit.FromPoint(9);
-
-            paragraph.Format.Font.Bold =
-                true;
-
-            paragraph.Format.Font.Color =
-                TextColor;
-
-            paragraph.AddText(title);
-        }
 
         private static void AddSectionSpacing(
             Section section
@@ -1244,26 +1300,7 @@ namespace Infrastructure.Reports
                 Unit.FromPoint(2);
         }
 
-        private static void AddOptionalItem(
-            ICollection<(string Label, string Value)> items,
-            string label,
-            string? value
-        )
-        {
-            if (string.IsNullOrWhiteSpace(
-                value
-            ))
-            {
-                return;
-            }
 
-            items.Add(
-                (
-                    label,
-                    value.Trim()
-                )
-            );
-        }
 
         private static string FormatHours(
             decimal? value
@@ -1304,6 +1341,39 @@ namespace Infrastructure.Reports
             return
                 $"{wholeHours} h {minutes} min";
         }
+
+        private static string FormatHoursCompact(
+    decimal? value
+)
+        {
+            if (!value.HasValue)
+            {
+                return "—";
+            }
+
+            var wholeHours =
+                decimal.ToInt32(
+                    decimal.Truncate(
+                        value.Value
+                    )
+                );
+
+            var minutes =
+                decimal.ToInt32(
+                    (
+                        value.Value -
+                        decimal.Truncate(
+                            value.Value
+                        )
+                    ) * 100m
+                );
+
+            return
+                $"{wholeHours}.{minutes:00}";
+        }
+
+
+
 
         private async Task<SignatureAssets>
             LoadSignatureAssetsAsync(
