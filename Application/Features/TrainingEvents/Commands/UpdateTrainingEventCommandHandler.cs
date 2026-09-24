@@ -60,13 +60,10 @@ namespace Application.Features.TrainingEvents.Commands
                 );
             }
 
-            if (
-                data.EvaluationTopics.Count == 0 ||
-                data.EvaluationTopics.Count > 5
-            )
+            if (data.EvaluationTopics.Count == 0)
             {
                 return Invalid(
-                    "El evento debe tener entre 1 y 5 temas."
+                    "El evento debe tener al menos un tema."
                 );
             }
 
