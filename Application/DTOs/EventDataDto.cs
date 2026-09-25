@@ -18,6 +18,8 @@
 
         public required string DateTo { get; set; }
 
+        public string? Comments { get; set; }
+
         public List<TopicDetailDto> EvaluationTopics { get; set; } = new();
     }
 }
