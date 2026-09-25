@@ -16,6 +16,8 @@ namespace Application.DTOs.TrainingReports
 
         public int AttendeesCount { get; set; }
 
+        public int TotalTrainingMinutes { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }

@@ -30,9 +30,49 @@ namespace Application.Features.TrainingReports.Queries.GetAllTrainingReports
                     LeaderName = report.LeaderName,
                     WeekNumber = report.WeekNumber,
                     AttendeesCount = report.Attendees.Count,
+
+                    TotalTrainingMinutes =
+                report.Attendees.Sum(
+                    attendee =>
+                        ConvertHourMinuteToMinutes(
+                            attendee.TotalHours
+                        )
+                ),
                     CreatedAt = report.CreatedAt
                 })
                 .ToList();
         }
+
+        private static int ConvertHourMinuteToMinutes(
+    decimal? value
+)
+        {
+            if (!value.HasValue)
+            {
+                return 0;
+            }
+
+            var hours =
+                decimal.ToInt32(
+                    decimal.Truncate(
+                        value.Value
+                    )
+                );
+
+            var minutes =
+                decimal.ToInt32(
+                    (
+                        value.Value -
+                        decimal.Truncate(
+                            value.Value
+                        )
+                    ) * 100m
+                );
+
+            return
+                (hours * 60) +
+                minutes;
+        }
+
     }
 }

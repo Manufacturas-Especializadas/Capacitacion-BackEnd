@@ -28,6 +28,7 @@ namespace Application.Features.TrainingEvents.Queries
                 Area = entity.Room?.RoomName ?? "Sin sala",
                 DateFrom = entity.DateFrom.ToString("dd-MM-yyyy"),
                 DateTo = entity.DateTo.ToString("dd-MM-yyyy"),
+                Comments = entity.GeneralComments,
                 EvaluationTopics = orderedTopics.Select(t => new TopicDetailDto
                 {
                     Id = t.Id,
