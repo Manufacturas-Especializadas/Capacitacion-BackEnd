@@ -82,10 +82,25 @@ namespace API.Controllers
         }
 
         [HttpGet("trainingEvents")]
-        public async Task<IActionResult> GetAllEventsSummary()
+        public async Task<IActionResult> GetAllEventsSummary(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 25,
+            [FromQuery] string? search = null,
+            [FromQuery] string? status = null,
+            CancellationToken cancellationToken = default)
         {
-            var query = new GetTrainingEventsQuery();
-            var result = await _mediator.Send(query);
+            if (page <= 0 || pageSize <= 0)
+            {
+                return BadRequest(new { message = "page y pageSize deben ser mayores que cero." });
+            }
+
+            if ((long)(page - 1) * pageSize > int.MaxValue)
+            {
+                return BadRequest(new { message = "La paginación solicitada excede el rango permitido." });
+            }
+
+            var query = new GetTrainingEventsQuery(page, pageSize, search, status);
+            var result = await _mediator.Send(query, cancellationToken);
 
             return Ok(result);
         }
