@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Common;
 using MediatR;
+using System.Globalization;
 
 namespace Application.Features.TrainingEvents.Queries
 {
@@ -29,6 +30,7 @@ namespace Application.Features.TrainingEvents.Queries
                     InstructorName = e.InstructorName,
                     DateFrom = e.DateFrom.ToString("dd-MM-yyyy"),
                     DateTo = e.DateTo.ToString("dd-MM-yyyy"),
+                    WeekNumber = ISOWeek.GetWeekOfYear(e.DateFrom),
                     Status = e.Status,
                     AttendeeCount = e.AttendeeCount,
                     TopicCount = e.TopicCount
