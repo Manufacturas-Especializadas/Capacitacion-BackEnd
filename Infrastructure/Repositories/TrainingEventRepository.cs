@@ -1,5 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Common;
+using Domain.ReadModels;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,13 +40,55 @@ namespace Infrastructure.Repositories
                     .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<IReadOnlyList<TrainingEvent>> GetAllEventsSummaryAsync()
+        public async Task<PagedResult<TrainingEventSummary>> GetAllEventsSummaryAsync(
+            int page,
+            int pageSize,
+            string? search,
+            string? status,
+            CancellationToken cancellationToken = default)
         {
-            return await _context.Set<TrainingEvent>()
-                .Include(t => t.Attendees)
-                .OrderByDescending(t => t.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync();
+            var query = _context.Set<TrainingEvent>().AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchTerm = search.Trim();
+                query = query.Where(e => e.CourseName.Contains(searchTerm)
+                    || e.InstructorName.Contains(searchTerm));
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                var statusFilter = status.Trim();
+                query = query.Where(e => e.Status == statusFilter);
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            var items = await query
+                .OrderByDescending(e => e.CreatedAt)
+                .ThenByDescending(e => e.Id)
+                .Skip(checked((page - 1) * pageSize))
+                .Take(pageSize)
+                .Select(e => new TrainingEventSummary
+                {
+                    Id = e.Id,
+                    CourseName = e.CourseName,
+                    InstructorName = e.InstructorName,
+                    DateFrom = e.DateFrom,
+                    DateTo = e.DateTo,
+                    Status = e.Status,
+                    AttendeeCount = e.Attendees.Count(),
+                    TopicCount = e.Topics.Count()
+                })
+                .ToListAsync(cancellationToken);
+
+            return new PagedResult<TrainingEventSummary>
+            {
+                Items = items,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
         }
     }
 }

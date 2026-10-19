@@ -1,5 +1,8 @@
 ﻿using Domain.Entities;
 
+using Domain.Common;
+using Domain.ReadModels;
+
 namespace Domain.Interfaces
 {
     public interface ITrainingEventRepository : IGenericRepository<TrainingEvent>
@@ -10,6 +13,11 @@ namespace Domain.Interfaces
 
         Task<TrainingEvent?> GetEventWithAttendeesAsync(int id);
 
-        Task<IReadOnlyList<TrainingEvent>> GetAllEventsSummaryAsync();
+        Task<PagedResult<TrainingEventSummary>> GetAllEventsSummaryAsync(
+            int page,
+            int pageSize,
+            string? search,
+            string? status,
+            CancellationToken cancellationToken = default);
     }
 }

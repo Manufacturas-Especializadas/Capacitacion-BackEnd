@@ -15,5 +15,7 @@
         public string Status { get; set; } = string.Empty;
 
         public int AttendeeCount { get; set; }
+
+        public int TopicCount { get; set; }
     }
 }
