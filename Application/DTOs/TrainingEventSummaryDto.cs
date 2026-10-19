@@ -12,6 +12,8 @@
 
         public string DateTo { get; set; } = string.Empty;
 
+        public int WeekNumber { get; set; }
+
         public string Status { get; set; } = string.Empty;
 
         public int AttendeeCount { get; set; }
