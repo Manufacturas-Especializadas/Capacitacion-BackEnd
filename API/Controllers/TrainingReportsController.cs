@@ -106,10 +106,32 @@ namespace API.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAllTrainingReports()
+        public async Task<IActionResult> GetAllTrainingReports(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 25,
+            [FromQuery] string? search = null,
+            [FromQuery] string? trainingType = null,
+            [FromQuery] int? weekNumber = null,
+            CancellationToken cancellationToken = default)
         {
+            if (page <= 0 || pageSize <= 0)
+            {
+                return BadRequest(new { message = "page y pageSize deben ser mayores que cero." });
+            }
+
+            if ((long)(page - 1) * pageSize > int.MaxValue)
+            {
+                return BadRequest(new { message = "La paginación solicitada excede el rango permitido." });
+            }
+
+            if (weekNumber is < 1 or > 53)
+            {
+                return BadRequest(new { message = "weekNumber debe estar entre 1 y 53." });
+            }
+
             var reports = await mediator.Send(
-                new GetAllTrainingReportsQuery()
+                new GetAllTrainingReportsQuery(page, pageSize, search, trainingType, weekNumber),
+                cancellationToken
                 );
 
             return Ok(reports);
