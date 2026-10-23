@@ -1,4 +1,6 @@
 ﻿using Domain.Entities;
+using Domain.Common;
+using Domain.ReadModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +25,12 @@ namespace Domain.Interfaces
             CancellationToken cancellationToken = default
         );
 
-        Task<IReadOnlyList<TrainingReport>> GetAllWithAttendeesAsync(
+        Task<PagedResult<TrainingReportSummary>> GetAllReportsSummaryAsync(
+            int page,
+            int pageSize,
+            string? search,
+            string? trainingType,
+            int? weekNumber,
             CancellationToken cancellationToken = default
         );
 

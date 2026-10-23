@@ -1,78 +1,37 @@
 ﻿using Application.DTOs.TrainingReports;
+using Domain.Common;
 using Domain.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Features.TrainingReports.Queries.GetAllTrainingReports
 {
-    public class GetAllTrainingReportsQueryHandler(IUnitOfWork unitOfWork) : 
-        IRequestHandler<GetAllTrainingReportsQuery,
-        IReadOnlyList<TrainingReportSummaryDto>>
+    public class GetAllTrainingReportsQueryHandler(IUnitOfWork unitOfWork) :
+        IRequestHandler<GetAllTrainingReportsQuery, PagedResult<TrainingReportSummaryDto>>
     {
-        public async Task<
-            IReadOnlyList<TrainingReportSummaryDto>
-        > Handle(
+        public async Task<PagedResult<TrainingReportSummaryDto>> Handle(
             GetAllTrainingReportsQuery request,
-            CancellationToken cancellationToken
-        )
+            CancellationToken cancellationToken)
         {
-            var reports = await unitOfWork
-                .TrainingReports
-                .GetAllWithAttendeesAsync(cancellationToken);
+            var reports = await unitOfWork.TrainingReports.GetAllReportsSummaryAsync(
+                request.Page, request.PageSize, request.Search,
+                request.TrainingType, request.WeekNumber, cancellationToken);
 
-            return reports
-                .Select(report => new TrainingReportSummaryDto
+            return new PagedResult<TrainingReportSummaryDto>
+            {
+                Items = reports.Items.Select(report => new TrainingReportSummaryDto
                 {
                     Id = report.Id,
                     TrainingType = report.TrainingType,
                     LeaderName = report.LeaderName,
                     WeekNumber = report.WeekNumber,
-                    AttendeesCount = report.Attendees.Count,
-
-                    TotalTrainingMinutes =
-                report.Attendees.Sum(
-                    attendee =>
-                        ConvertHourMinuteToMinutes(
-                            attendee.TotalHours
-                        )
-                ),
+                    AttendeesCount = report.AttendeesCount,
+                    TotalTrainingMinutes = report.TotalTrainingMinutes,
                     CreatedAt = report.CreatedAt
-                })
-                .ToList();
+                }).ToList(),
+                Page = reports.Page,
+                PageSize = reports.PageSize,
+                TotalCount = reports.TotalCount
+            };
         }
-
-        private static int ConvertHourMinuteToMinutes(
-    decimal? value
-)
-        {
-            if (!value.HasValue)
-            {
-                return 0;
-            }
-
-            var hours =
-                decimal.ToInt32(
-                    decimal.Truncate(
-                        value.Value
-                    )
-                );
-
-            var minutes =
-                decimal.ToInt32(
-                    (
-                        value.Value -
-                        decimal.Truncate(
-                            value.Value
-                        )
-                    ) * 100m
-                );
-
-            return
-                (hours * 60) +
-                minutes;
-        }
-
     }
 }
